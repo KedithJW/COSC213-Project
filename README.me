@@ -36,3 +36,34 @@ Ethan Turchyn
 *   **Activity Feed:** On the project page, show a chronological feed of recent activity (e.g., "User A created task 'Design Logo'", "User B completed task 'Setup Database'").
 
 *   **File Attachments:** Allow users to upload and attach files (e.g., documents, images) to tasks.
+
+
+## Project Directory Structure
+
+/COSC213-Project 
+│
+├── /public
+│   ├── index.php           ← Homepage / dashboard
+│   ├── board.php           ← Displays one board
+│   ├── login.php           ← Login form
+│   ├── register.php        ← Registration form
+│   ├── js/
+│   │    └── main.js        ← Front-end JS (AJAX, drag/drop)
+│   ├── css/
+│   │    └── style.css
+│   └── img/
+│
+├── /includes
+│   ├── db_connect.php      ← MySQL connection (PDO)
+│   ├── auth.php            ← Login & session handling
+│   ├── helpers.php         ← Utility functions (e.g., sanitize input)
+│
+├── /api
+│   ├── boards.php          ← Handles AJAX requests for boards
+│   ├── lists.php           ← Handles AJAX requests for lists
+│   └── cards.php           ← Handles AJAX requests for cards
+│
+└── /templates
+    ├── header.php          ← Shared navigation, HTML <head>
+    └── footer.php
+
