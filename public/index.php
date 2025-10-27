@@ -44,7 +44,7 @@
             <!-- Middle: Search (always visible) -->
             <form class="d-flex flex-grow-1 mx-2" role="search" style="min-width: 0; max-width: 600px;">
                 <input class="form-control form-control-sm" type="search" placeholder="Search" aria-label="Search"
-                    style="min-width: 80px; color: #fff" />
+                    style="min-width: 80px; color: #000" />
             </form>
 
             <!-- Toggler -->
