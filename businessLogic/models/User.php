@@ -1,42 +1,43 @@
 <?php
 
-class User
+declare(strict_types=1);
+final class User
 {
-    private $user_id; //PK 
-    private $email; //UNIQUE
-    private $f_name;
-    private $l_name;
+    private readonly int $user_id; //PK 
+    private string $email; //UNIQUE
+    private ?string $f_name = null;
+    private ?string $l_name = null;
     
-    private $phone;
-    private $hashed_password; //CAN ONLY STORE HASHED PASS
-    private $created_at;
+    private ?string $phone = null;
+    private readonly string $hashed_password; //CAN ONLY STORE HASHED PASS
+    private readonly DateTimeImmutable $created_at;
    
-    public function __construct($user_id, $email, $hashed_password, $created_at){
+    public function __construct(int $user_id, string $email, string $hashed_password, DateTimeImmutable $created_at){
         $this->user_id = $user_id;
-        $this->email = $email;
+        $this->email = strtolower(trim($email));
         $this->hashed_password = $hashed_password;
         $this->created_at = $created_at;
     }
 
 
     //Getters
-    public function get_user_id(){
+    public function getUserId(): int{
         return $this->user_id;
     }
-    public function get_email(){
+    public function getEmail(): string{
         return $this->email;
     }
  
-    public function get_created_at(){
+    public function getCreatedAt(): DateTimeImmutable {
         return $this->created_at;
     } 
     
-    public function get_phone(){
+    public function getPhone(): ?string{
         return $this->phone;
     }
 
 
-    public function get_full_name(){
+    public function getFullName(): string{
       $first = trim(($this->f_name ?? ''));
       $last = trim(($this->l_name ?? ''));
       if($first === '' && $last === ''){
@@ -50,28 +51,28 @@ class User
       }
     }
 
-    public function get_l_name(){
-        return $this->trim(l_name);
+    public function getLastName():string{
+        return trim($this->l_name ?? '');
     }
 
-    public function get_f_name(){
-        return $this->trim(f_name);
+    public function getFirstName(): string{
+        return trim($this->f_name ?? '');
     }
 
 
     //Setters 
 
-    public function set_email($email){
+    public function setEmail(string $email): void{
         $this->email = strtolower(trim($email));
     }
 
-    public function set_phone($phone){
-        $this->phone = $phone;
+    public function setPhone(?string $phone): void{
+        $this->phone = $phone !== null ? trim($phone) : null;
     }
 
-    public function set_full_name($f_name, $l_name){
-        $this->f_name = $f_name;
-        $this->l_name = $l_name;
+    public function setFullName(string $f_name, string $l_name): void{
+        $this->f_name = trim($f_name);
+        $this->l_name = trim($l_name);
     }
 
 }
