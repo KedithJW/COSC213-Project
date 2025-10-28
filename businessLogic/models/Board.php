@@ -1,5 +1,5 @@
 <?php
-class Project {
+class Board {
   private $name;
   private $tasks = [];
 
@@ -7,7 +7,7 @@ class Project {
     $this->name = $name;
   }
 
-  public function getProject(): string {
+  public function getBoard(): string {
     return $this->name;
   }
 
