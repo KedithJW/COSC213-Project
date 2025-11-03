@@ -1,16 +1,9 @@
 <?php
 require_once __DIR__ . '/../services/BoardService.php';
+require_once __DIR__ . '/../services/TaskService.php';
 
-//app
-$input = readline("Create board? (y/n): ");
-if($input == "y") {
-  $name = readline("Board Name: ");
-  $boardService = new boardService();
-  
-  $board = $boardService->createBoard($name); //takes input, passes to pS
-}
-else
-  return;
+$boardService = new boardService();
 
-echo "Your boards: " . PHP_EOL;
+$board = $boardService->createBoard("board1");
 echo $board->getBoard() . PHP_EOL;
+
