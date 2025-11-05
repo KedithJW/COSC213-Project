@@ -35,7 +35,7 @@ try {
             $message = "Username must be between 3 and 20 characters.";
         } elseif (strlen($password) < 6 || strlen($password) > 20) {
             $message = "Password must be between 6 and 20 characters.";
-        } else if (strlen($phone) != 10){
+        } else if (strlen($phone) != 10 || !ctype_digit($phone)){
             $message = "Please input a valid 10-digit phone number. Do not add dashes or parentheses.";
         }else {
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email OR username = :username"); 
