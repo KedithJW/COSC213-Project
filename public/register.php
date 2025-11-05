@@ -184,7 +184,7 @@ try {
 
 <div class="header">
     <div class="left">
-        <button onclick="location.href='HomePage.php';">App Name</button>
+        <button onclick="location.href='index.php';">App Name</button>
     </div>
     <div class="right">
         <div class="dropdown">
