@@ -1,7 +1,6 @@
 <?php
-// Php later 
+// Php later
 ?>
-
 
 <!doctype html>
 <html lang="en">
@@ -22,16 +21,6 @@
             background-color: rgba(255, 255, 255, .18);
         }
     </style>
-
-    </style>
-
-
-    </style>
-
-
-
-
-    </style>
 </head>
 
 <body>
@@ -41,7 +30,7 @@
             <!-- Left: Brand -->
             <a href="#" class="navbar-brand flex-shrink-0 px-5" style="white-space: nowrap;">APP NAME</a>
 
-            <!-- Middle: Search (always visible) -->
+            <!-- Middle: Search -->
             <form class="d-flex flex-grow-1 mx-2" role="search" style="min-width: 0; max-width: 600px;">
                 <input class="form-control form-control-sm" type="search" placeholder="Search" aria-label="Search"
                     style="min-width: 80px; color: #000" />
@@ -53,7 +42,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Collapsible Content: Navigation Links Only -->
+            <!-- Collapsible Content -->
             <div class="collapse navbar-collapse flex-shrink-0" id="navmenu">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -62,18 +51,24 @@
                     <li class="nav-item">
                         <a href="#projects" class="nav-link">Projects</a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#who" class="nav-link">Account</a>
+                    <!-- Account Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Account
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
+                            <li><a class="dropdown-item" href="login.php">Login</a></li>
+                            <li><a class="dropdown-item" href="register.php">Sign Up</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!---DASHBOARD---->
-
-
-    <!--DS: Nav Bars-->
+    <!-- DASHBOARD -->
     <div class="container-fluid">
         <div class="row min-vh-100">
             <aside class="col-12 col-md-auto p-5 bg-primary bg-gradient text-white" style="width:14rem;">

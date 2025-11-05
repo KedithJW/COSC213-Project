@@ -35,7 +35,9 @@ try {
             $message = "Username must be between 3 and 20 characters.";
         } elseif (strlen($password) < 6 || strlen($password) > 20) {
             $message = "Password must be between 6 and 20 characters.";
-        } else {
+        } else if (strlen($phone) != 10){
+            $message = "Please input a valid 10-digit phone number. Do not add dashes or parentheses.";
+        }else {
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email OR username = :username"); 
             $stmt->execute(['email' => $email, 'username' => $username]);
             //This checks for uniqueness, we cant have 2 emails/usersnames in the db that are the same 
@@ -205,7 +207,7 @@ try {
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Register</button>
-        <!-- <p> Want to login instead? </p> <a href="login.php">Click here</a></p> -->
+        <p> Want to login instead? </p> <a href="login.php">Click here</a></p>
     </form>
 
     <?php
