@@ -90,7 +90,7 @@
                 <ul class="nav nav-pills">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                            aria-expanded="false">Workspace</a>
+                            aria-expanded="false">Boards</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Boards</a></li>
                             <li><a class="dropdown-item" href="#">Members</a></li>
@@ -99,9 +99,15 @@
                     </li>
                 </ul>
             </aside>
-            <main class="col-12 col-md p5">
-                Workspace
-            </main>
+            <main class="col py-3 bg-primary">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                        aria-labelledby="v-pills-home-tab">
+                        <!-- Boards Content -->
+                        <h2>Boards</h2>
+                        <p>Content for Board goes here.</p>
+                    </div>
+                </div>
         </div>
     </div>
 
