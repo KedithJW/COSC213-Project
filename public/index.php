@@ -1,5 +1,5 @@
 <?php
-// Php later
+
 ?>
 
 <!doctype html>
@@ -29,13 +29,6 @@
         <div class="container-fluid">
             <!-- Left: Brand -->
             <a href="#" class="navbar-brand flex-shrink-0 px-5" style="white-space: nowrap;">APP NAME</a>
-
-            <!-- Middle: Search -->
-            <form class="d-flex flex-grow-1 mx-2" role="search" style="min-width: 0; max-width: 600px;">
-                <input class="form-control form-control-sm" type="search" placeholder="Search" aria-label="Search"
-                    style="min-width: 80px; color: #000" />
-            </form>
-
             <!-- Toggler -->
             <button class="navbar-toggler flex-shrink-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navmenu">
@@ -48,9 +41,6 @@
                     <li class="nav-item">
                         <a href="#learn" class="nav-link">Create</a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#projects" class="nav-link">Projects</a>
-                    </li>
                     <!-- Account Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -59,8 +49,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
-                            <li><a class="dropdown-item" href="login.php">Login</a></li>
-                            <li><a class="dropdown-item" href="register.php">Sign Up</a></li>
+                            <li><a class="dropdown-item" href="login.php">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -78,25 +67,13 @@
                         <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
                             data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home"
                             aria-selected="true">Boards</button>
-                        <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill"
-                            data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile"
-                            aria-selected="false">Templates</button>
                         <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill"
                             data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages"
-                            aria-selected="false">Home</button>
+                            aria-selected="false">Home</button> 
                     </div>
                 </div>
                 <hr style="width: 100%;">
                 <ul class="nav nav-pills">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                            aria-expanded="false">Boards</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Boards</a></li>
-                            <li><a class="dropdown-item" href="#">Members</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                        </ul>
-                    </li>
                 </ul>
             </aside>
             <main class="col py-3 bg-primary">
