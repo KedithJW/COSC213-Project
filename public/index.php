@@ -40,7 +40,8 @@
             <div class="collapse navbar-collapse flex-shrink-0" id="navmenu">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a href="#learn" class="nav-link">Create</a>
+                        <a href="#learn" class="nav-link" data-bs-toggle="modal"
+                                data-bs-target="#myFormModal">Create</a>
                     </li>
                     <!-- Account Dropdown -->
                     <li class="nav-item dropdown">
@@ -105,7 +106,7 @@
                         <div class="modal fade" id="myFormModal" tabindex="-1" aria-labelledby="myFormModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content bg-dark bg-gradient text-white">
+                                <div class="modal-content bg-primary bg-gradient text-white">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Create board</h5>
                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -116,7 +117,7 @@
                                                 <label for="inputBoard" class="form-label">Board title</label>
                                                 <input type="text" class="form-control" id="inputBoard">
                                             </div>
-                                            <button type="button" class="btn btn-secondary bg-gradient" id="createBtn">Create</button>
+                                            <button type="button" class="btn btn-dark " id="createBtn">Create</button>
                                         </form>
                                     </div>
                                 </div>
