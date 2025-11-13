@@ -28,7 +28,7 @@
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container-fluid">
             <!-- Left: Brand -->
-            <a href="#" class="navbar-brand flex-shrink-0 px-5" style="white-space: nowrap;">APP NAME</a>
+            <a href="#" class="navbar-brand flex-shrink-0 px-1">Project Task Manager</a>
 
             <!-- Toggler -->
             <button class="navbar-toggler flex-shrink-0" type="button" data-bs-toggle="collapse"
@@ -105,10 +105,10 @@
                         <div class="modal fade" id="myFormModal" tabindex="-1" aria-labelledby="myFormModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content">
+                                <div class="modal-content bg-dark bg-gradient text-white">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Create board</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form id="createBoardForm">
@@ -116,7 +116,7 @@
                                                 <label for="inputBoard" class="form-label">Board title</label>
                                                 <input type="text" class="form-control" id="inputBoard">
                                             </div>
-                                            <button type="button" class="btn btn-primary" id="createBtn">Create</button>
+                                            <button type="button" class="btn btn-secondary bg-gradient" id="createBtn">Create</button>
                                         </form>
                                     </div>
                                 </div>
@@ -125,8 +125,7 @@
 
                         <!-- JS -->
                         <script>
-                            let buttonCount = 0; // R
-
+                            let buttonCount = 0; 
                             document.getElementById("createBtn").addEventListener("click", function () {
                                 buttonCount++;
                                 const input = document.getElementById("inputBoard");
@@ -136,21 +135,18 @@
                                 const newBtn = document.createElement("button");
 
                                 newBtn.textContent = "";
-                                newBtn.className = "btn btn-dark";
-                                newBtn.style = "height: 100px; width: 25%; opacity:0.8; margin-top: 50px; position:relative; max-width:225px; min-width: 225px;";
+                                newBtn.className = "btn btn-dark bg-gradient";
+                                newBtn.style.cssText = "height: 100px; width: 25%; opacity:0.8; margin-top: 50px; position:relative; max-width:225px; min-width: 225px;";
 
 
-    
-                                // label pinned to the bottom of the button
                                 const label = document.createElement("div");
-                                label.className = "btn-label bg-dark bg-gradient";
+                                label.className = "btn-label bg-dark ";
                                 label.textContent = buttonText; 
                                 label.style.cssText =
                                     "position:absolute; left:0; right:0; bottom:0; padding:6px 8px; " +
-                                    "font-size:0.85rem; text-align:center; border-radius:4px";
+                                    "font-size:0.85rem; text-align:left; border-radius:4px";
 
                                 newBtn.appendChild(label);
-                                // Insert new button BEFORE the Create button
                                 wrapper.insertBefore(newBtn, createBtn);
 
                                 // Clear input
