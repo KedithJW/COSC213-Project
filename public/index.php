@@ -11,17 +11,21 @@ if (!isset($_SESSION['user_id'])) {
 //check
 $user_id = $_SESSION['user_id'];
 
-// insert boards 
+// when user creates board 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_board'])) {
-    $board_name = trim($_POST['board_name']);
+    $board_name = trim($_POST['board_name']); // extract board name from POST data
 
-    $stmt = $pdo->prepare("INSERT INTO board (name, owner_id) VALUES (?,?)");
+    // $stmt is a pdo statement object 
+
+    //update board db 
+    $stmt = $pdo->prepare("INSERT INTO board (name, owner_id) VALUES (?,?)");  
     $stmt->execute([$board_name, $user_id]);
     $new_board_id = $pdo->lastInsertId();
-
+    //update board_members
     $stmt = $pdo->prepare("INSERT INTO board_members (board_id, user_id, role) VALUES (?,?, 'owner')");
     $stmt->execute([$new_board_id, $user_id]);
 
+    //send to new board 
     header("Location: board.php?id=" . $new_board_id);
     exit;
 }
@@ -35,8 +39,9 @@ $stmt = $pdo->prepare("
     WHERE bm.user_id = ?
     ORDER BY b.created_at DESC
 ");
-$stmt->execute([$user_id]);
-$boards = $stmt->fetchAll();
+
+$stmt->execute([$user_id]); 
+$boards = $stmt->fetchAll(); // array container for all boards 
 ?>
 
 <!doctype html>
@@ -163,7 +168,7 @@ $boards = $stmt->fetchAll();
                                             data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
-
+                                        <!-- Create new board form -->
                                         <form id="createBoardForm" method="POST">
                                             <div class="mb-3">
                                                 <label for="inputBoard" class="form-label">Board title</label>
