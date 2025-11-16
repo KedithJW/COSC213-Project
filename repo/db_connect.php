@@ -12,7 +12,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     
     // Remove this after testing
-    echo "Connected successfully";
+    //echo "Connected successfully";
 } catch(PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }
