@@ -25,3 +25,17 @@ CREATE TABLE users (
   UNIQUE (email),
   UNIQUE (username)
 );
+
+CREATE TABLE task (
+  id int PRIMARY KEY auto_increment	
+  name varchar(50),		
+  card_id	int	
+);
+
+CREATE TABLE card (
+  id int PRIMARY KEY auto_increment,
+  name	varchar(50),		
+  board_id int		
+);
+
+
