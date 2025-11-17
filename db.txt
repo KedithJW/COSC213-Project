@@ -9,7 +9,7 @@ CREATE TABLE board_members(
     id INT PRIMARY KEY AUTO_INCREMENT,
     board_id INT,
     user_id INT,
-    role enum('owner', 'member') DEFAULT member,
+    role enum('owner', 'member') DEFAULT 'member',
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
