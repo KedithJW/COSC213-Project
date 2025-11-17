@@ -54,7 +54,24 @@ $(document).ready(function() {
   $(document).on("click", ".add-task-btn", function() {
 
     // Find the nearest card and its list
+    const card = $(this).closest(".card");
+    const listGroup = card.find(".list-group");
 
+    const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
+    const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
+    // Create new text area
+    const newText = $('<textarea>').addClass("form-control task-name").text("Another one");
+    // Eventually will implement more than just text area... so put inside a <div>
+    // The div will represent the task object... childNodes are the attributes
+    // So id should be assigned to div... update task then needs to use this id
+    //const newTaskDiv = $('<div>').addClass("new-task");
+    // Create a new task list item
+    const newTask = $("<li>").addClass("list-group-item new-task");
+
+    // Append it to the list
+    newTask.append(newDeleteBtn, completeBtn ,newText);
+    listGroup.append(newTask);
+    newText.focus();
   });
 
   //CREATE CARD HERE
