@@ -1,3 +1,8 @@
+<?php
+require_once '../repo/db_connect.php';
+require_once '../repo/auth_check.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
