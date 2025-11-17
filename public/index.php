@@ -186,9 +186,33 @@ $boards = $stmt->fetchAll(); // array container for all boards
 
 
                     </div>
+
+                    <!-- Home pane (new) -->
+                    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
+                        aria-labelledby="v-pills-messages-tab" style="position: relative;">
+                        <h2 class="text-left text-white" style="font-size:4vh;">HOME</h2>
+
+                        <ul class="list-group bg-dark" style="margin-top:7vh;">
+                            <li class="list-group-item ">Recent activity</li>
+                            <li class="list-group-item list-group-item-info">Activity 1</li>
+                            <li class="list-group-item list-group-item-info">Activity 2</li>
+
+                        </ul>
+
+
+                        <ul class="list-group bg-dark" style=" margin-top:7vh;">
+                            <li class="list-group-item">Notifications</li>
+                            <li class="list-group-item list-group-item-success">Notification 1</li>
+                            <li class="list-group-item list-group-item-success">Notification 1</li>
+
+
+                        </ul>
+                    </div>
+
                 </div>
+            </main>
+
         </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
