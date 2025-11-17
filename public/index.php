@@ -1,5 +1,47 @@
 <?php
+session_start(); //starts the session
+require_once '../repo/db_connect.php';  
 
+//if no one logged in redirect to login 
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+//check
+$user_id = $_SESSION['user_id'];
+
+// when user creates board 
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_board'])) {
+    $board_name = trim($_POST['board_name']); // extract board name from POST data
+
+    // $stmt is a pdo statement object 
+
+    //update board db 
+    $stmt = $pdo->prepare("INSERT INTO board (name, owner_id) VALUES (?,?)");  
+    $stmt->execute([$board_name, $user_id]);
+    $new_board_id = $pdo->lastInsertId();
+    //update board_members
+    $stmt = $pdo->prepare("INSERT INTO board_members (board_id, user_id, role) VALUES (?,?, 'owner')");
+    $stmt->execute([$new_board_id, $user_id]);
+
+    //send to new board 
+    header("Location: board.php?id=" . $new_board_id);
+    exit;
+}
+
+// get all boards this user is a member of
+$stmt = $pdo->prepare("
+    SELECT b.*, bm.role, u.username as owner_name
+    FROM board b
+    JOIN board_members bm ON b.id = bm.board_id
+    LEFT JOIN users u ON b.owner_id = u.id
+    WHERE bm.user_id = ?
+    ORDER BY b.created_at DESC
+");
+
+$stmt->execute([$user_id]); 
+$boards = $stmt->fetchAll(); // array container for all boards 
 ?>
 
 <!doctype html>
@@ -83,16 +125,30 @@
                 </ul>
             </aside>
 
-            <!-- BOARD MAIN CONTENT -->
+            <!-- MAIN CONTENT -->
             <main class="col py-3 bg-primary bg-gradient">
                 <div class="tab-content" id="v-pills-tabContent" style="margin-left:1vh; margin-top: 4vh;">
-
-                    <!-- Boards pane (existing) -->
                     <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
                         aria-labelledby="v-pills-home-tab">
-                        <h2 class="text-left text-white" style="position:relative; font-size:4vh;">YOUR BOARDS</h2>
+                        <!-- Boards Content -->
+                        <h2 class="text-left text-white" style="postion:relative; font-size:4vh;">YOUR BOARDS</h2>
 
+
+                        <!-- BOARD WRAPPER -->
                         <div class="board_wrapper" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            
+                            <!-- Load user boards -->
+                            <?php foreach ($boards as $board): ?>
+                                <a href="board.php?id=<?= $board['id'] ?>" class="btn btn-dark bg-gradient"
+                                    style="height: 100px; width: 25%; opacity:0.8; margin-top: 50px; position:relative; max-width:225px; min-width: 225px; text-decoration: none;">
+
+                                    <div class="btn-label bg-dark"
+                                        style="position:absolute; left:0; right:0; bottom:0; padding:6px 8px; font-size:0.85rem; text-align:left; border-radius:4px;">
+                                        <?= htmlspecialchars($board['name']) ?>
+                                    </div>
+                                </a>
+                            <?php endforeach; ?>
+
                             <button type="button" class="btn btn-dark create-board-btn" data-bs-toggle="modal"
                                 data-bs-target="#myFormModal"
                                 style="height: 100px; opacity:0.8; margin-top: 50px;  max-width:225px; min-width: 225px;"
@@ -101,7 +157,7 @@
                             </button>
                         </div>
 
-                        <!-- MODAL (keep your modal here) -->
+                        <!-- MODAL -->
                         <div class="modal fade" id="myFormModal" tabindex="-1" aria-labelledby="myFormModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog">
@@ -112,50 +168,23 @@
                                             data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form id="createBoardForm">
+                                        <!-- Create new board form -->
+                                        <form id="createBoardForm" method="POST">
                                             <div class="mb-3">
                                                 <label for="inputBoard" class="form-label">Board title</label>
-                                                <input type="text" class="form-control" id="inputBoard">
+                                                <input type="text" name="board_name" class="form-control"
+                                                    id="inputBoard" required
+                                                    value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>">
                                             </div>
-                                            <button type="button" class="btn btn-dark " id="createBtn">Create</button>
+                                            <button type="submit" name="create_board" class="btn btn-dark "
+                                                id="createBtn">Create</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- keep your createBtn script here (or move it later) -->
-                        <script>
-                            let buttonCount = 0;
-                            document.getElementById("createBtn").addEventListener("click", function () {
-                                buttonCount++;
-                                const input = document.getElementById("inputBoard");
-                                const wrapper = document.querySelector(".board_wrapper");
-                                const createBtn = document.getElementById("createBoard");
-                                const buttonText = input.value || `New Board ${buttonCount}`;
-                                const newBtn = document.createElement("button");
 
-                                newBtn.textContent = "";
-                                newBtn.className = "btn btn-dark bg-gradient";
-                                newBtn.style.cssText = "height: 100px; width: 25%; opacity:0.8; margin-top: 50px; position:relative; max-width:225px; min-width: 225px;";
-
-                                const label = document.createElement("div");
-                                label.className = "btn-label bg-dark ";
-                                label.textContent = buttonText;
-                                label.style.cssText =
-                                    "position:absolute; left:0; right:0; bottom:0; padding:6px 8px; " +
-                                    "font-size:0.85rem; text-align:left; border-radius:4px";
-
-                                newBtn.appendChild(label);
-                                wrapper.insertBefore(newBtn, createBtn);
-
-                                input.value = "";
-
-                                const myModalEl = document.getElementById('myFormModal');
-                                const modal = bootstrap.Modal.getInstance(myModalEl);
-                                modal.hide();
-                            });
-                        </script>
                     </div>
 
                     <!-- Home pane (new) -->
@@ -185,11 +214,9 @@
 
         </div>
 
-
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-            </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+        </script>
 </body>
 
 </html>
