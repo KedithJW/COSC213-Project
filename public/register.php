@@ -25,8 +25,8 @@
         UNIQUE (username)
     );
 */
-
 $host = 'localhost';
+$port = '8889'; 
 $db   = 'COSC213';
 $user = 'Admin';
 $pass = '';

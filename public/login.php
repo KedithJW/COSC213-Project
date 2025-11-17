@@ -2,10 +2,10 @@
 session_start(); // Starts the session for login tracking
 
 $host = 'localhost';
-$db   = 'cosc213project';
-$user = 'root';
+$port = '8889'; 
+$db   = 'COSC213';
+$user = 'Admin';
 $pass = '';
-
 $message = '';
 
 try {
