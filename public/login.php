@@ -28,7 +28,7 @@ try {
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
-                    header("Location: board.php");
+                    header("Location: index.php");
                     exit;
                 } else {
                     $message = "Incorrect password.";
