@@ -1,45 +1,34 @@
 <?php
-session_start(); // Starts the session for login tracking
+session_start();
+require_once '../repo/db_connect.php';
 
-$host = 'localhost';
-$db   = 'COSC213';
-$user = 'Admin';
-$pass = '';
-$message = '';
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = trim($_POST['username']);
-        $password = $_POST['password'];
+    if (strlen($username) < 3 || strlen($username) > 20) {
+        $message = "Username must be between 3 and 20 characters.";
+    } elseif (strlen($password) < 6 || strlen($password) > 20) {
+        $message = "Password must be between 6 and 20 characters.";
+    } else {
+        $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
+        $stmt->execute(['username' => $username]);
 
-        if (strlen($username) < 3 || strlen($username) > 20) {
-            $message = "Username must be between 3 and 20 characters.";
-        } elseif (strlen($password) < 6 || strlen($password) > 20) {
-            $message = "Password must be between 6 and 20 characters.";
-        } else {
-            $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
-            $stmt->execute(['username' => $username]);
-
-            if ($stmt->rowCount() === 1) {
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                if (password_verify($password, $user['password'])) {
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['username'] = $username;
-                    header("Location: index.php");
-                    exit;
-                } else {
-                    $message = "Incorrect password.";
-                }
+        if ($stmt->rowCount() === 1) {
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $username;
+                header("Location: index.php");
+                exit;
             } else {
-                $message = "Username not found.";
+                $message = "Incorrect password.";
             }
+        } else {
+            $message = "Username not found.";
         }
     }
-} catch (PDOException $e) {
-    $message = "Database error: " . $e->getMessage();
 }
 ?>
 
