@@ -1,10 +1,56 @@
 
 
 <?php
+<<<<<<< Updated upstream
 // Right now, there is no php backend, so we simulate login with JavaScript, i just copied the code from a prev project. It can be changed later once we have a backend and i am more familiar with php. 
 // The home button is also set to go to Homepage.html, becuase i dont know what page we are making the home page. (very easy change) 
 // The temp password is "password" and the temp username is "admin" as shown in line 125, it should just send you back the previous page on success, the code is literally hitting chromes back button.
 // I also eyeballed the coulors and stuff, it can be changed later too.
+=======
+session_start(); //starts the session, will, need similar code on any page that needs to check if user is logged in, see logout.php for the code that is needed
+//for main push
+$host = 'localhost';
+$db   = 'cosc213project';
+$user = 'root';
+$pass = '';
+
+$message = '';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = trim($_POST['username']);
+        $password = $_POST['password'];
+
+        if (strlen($username) < 3 || strlen($username) > 20) {
+            $message = "Username must be between 3 and 20 characters.";
+        } elseif (strlen($password) < 6 || strlen($password) > 20) {
+            $message = "Password must be between 6 and 20 characters.";
+        } else {
+            $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
+            $stmt->execute(['username' => $username]);
+
+            if ($stmt->rowCount() === 1) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (password_verify($password, $user['password'])) {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $username;
+                    header("Location: board.php");
+                    exit;
+                } else {
+                    $message = "Incorrect password.";
+                }
+            } else {
+                $message = "Username not found.";
+            }
+        }
+    }
+} catch (PDOException $e) {
+    $message = "Database error: " . $e->getMessage();
+}
+>>>>>>> Stashed changes
 ?>
 
 <!DOCTYPE html>

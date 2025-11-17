@@ -6,8 +6,34 @@
     I also saw on Trello's sign up page then has some terms and conditions, we could add something like that to fill the void, as well a some photos in the bottom and a the Brand name, ex Trello has "Trello" "terms and condition, then a sign up button.
     Colour and stuff can also be changed as I built it off the login.php. this would be a seperate file tho. this is register.php that redirects to login.php on successful registration
     ------ I also made some notes throughout the file, re the dropdown and some of the security stuff, idk if we want to keep that sec stuff or not but its there if we do. Wasnt very hard to implement so idc if we get rid of it.
+<<<<<<< Updated upstream
     Re the Dropdown i also added the alternate code in the html section at the bottom, just a Already have an acount thingy.
     Do we want to add a confirm password field as well, and should be add more checks for a secure passwrd like a !@#%^& requirment.
+=======
+    Re the Dropdown i also added the alternate code in the html section at the bottom, just a Already have an account thingy.
+    Do we want to add a confirm password field as well, and should we add more checks for a secure password like a !@#%^& requirement.
+
+    For Reference :
+    This is the sql code i used to make the users table in the database
+    
+    CREATE TABLE users (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    username VARCHAR(30) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE (email),
+    UNIQUE (username)
+)
+
+
+
+For Main Push
+
+>>>>>>> Stashed changes
 */
 $host = 'localhost'; // Change these to our db info
 $db   = 'database_name';
