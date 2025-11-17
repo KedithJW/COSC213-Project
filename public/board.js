@@ -77,7 +77,7 @@ $(document).ready(function() {
 
   //CREATE CARD HERE
   async function createCard(cardName, newCard) {
-    const url = '/../213Project/api/addCard.php';
+    const url = '/../COSC213-PROJECT/api/addCard.php';
     const cardData = {cardname: cardName}; // seems redundant but trying to reformat for JSON
 
     
@@ -97,7 +97,7 @@ $(document).ready(function() {
 
   // create-task function for eventListener below
   async function createTask(taskName, cardId, taskListItem) {
-    const url = '/../213Project/api/addTask.php';
+    const url = '/../COSC213-PROJECT/api/addTask.php';
     const taskData = {taskname: taskName,
                       cardid: cardId}; // seems redundant but trying to reformat for JSON
 
@@ -117,7 +117,7 @@ $(document).ready(function() {
   }
 
   async function deleteCard(cardId) {
-    const url = '/../213Project/api/deleteCard.php'
+    const url = '/../COSC213-PROJECT/api/deleteCard.php'
     const cardData = {cardid: cardId};
 
     fetch(url, {
@@ -137,7 +137,7 @@ $(document).ready(function() {
   }
 
   async function deleteTask(taskId) {
-    const url = '/../213Project/api/deleteTask.php'
+    const url = '/../COSC213-PROJECT/api/deleteTask.php'
     const taskData = {taskid: taskId};
 
     fetch(url, {
@@ -157,7 +157,7 @@ $(document).ready(function() {
   }
   // UPDATE card
   async function updateCard(cardId, cardName) {
-    const url = '/../213Project/api/updateCard.php'
+    const url = '/../COSC213-PROJECT/api/updateCard.php'
     const cardData = {cardid: cardId,
                       cardname: cardName};
 
@@ -181,7 +181,7 @@ $(document).ready(function() {
   }
   // updateTask function
   async function updateTask(taskId, taskName) {
-    const url = '/../213Project/api/updateTask.php'
+    const url = '/../COSC213-PROJECT/api/updateTask.php'
     const taskData = {taskid: taskId,
                       taskname: taskName};
 
@@ -253,7 +253,7 @@ $(document).ready(function() {
   async function loadTasks(cardId) {
     try {
       console.log('Getting tasks...');
-      const response = await fetch(`/../213Project/api/getTasks.php?cardId=${cardId}`)
+      const response = await fetch(`/../COSC213-PROJECT/api/getTasks.php?cardId=${cardId}`)
       console.log("HTTP status:", response.status);
       const data = await response.json();
       // for trouble shooting: run next two lines instead above line
@@ -277,7 +277,7 @@ $(document).ready(function() {
   async function loadCards(boardId) {
     try {
       console.log('Getting cards...');
-      const response = await fetch(`/../213Project/api/getCards.php?boardId=${boardId}`)
+      const response = await fetch(`/../COSC213-PROJECT/api/getCards.php?boardId=${boardId}`)
       const data = await response.json();
 
       if (data.success) {

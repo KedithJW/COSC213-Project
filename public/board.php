@@ -12,7 +12,7 @@
     <!-- NAVBAR / HEADER -->
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container">
-            <a href="#" class="navbar-brand">HOME</a>
+            <a href="/public/index.php" class="navbar-brand">HOME</a>
             <button 
                 class="navbar-toggler"
                 type="button"
