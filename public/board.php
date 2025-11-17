@@ -1,6 +1,6 @@
 <?php
 require_once '../repo/db_connect.php';
-require_once '../repo/auth_check.php';
+require_once '../repo/auth.php';
 ?>
 
 <!DOCTYPE html>

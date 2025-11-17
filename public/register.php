@@ -1,4 +1,6 @@
 <?php
+require_once '../repo/db_connect.php';
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $firstName = trim($_POST['firstName']);
         $lastName  = trim($_POST['lastName']);

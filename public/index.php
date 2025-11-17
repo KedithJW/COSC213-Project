@@ -1,9 +1,9 @@
 <?php
-session_start(); //starts the session
+
 require_once '../repo/db_connect.php';  
 
 //if no one logged in redirect to login 
-require_once '../repo/auth_check.php';
+require_once '../repo/auth.php';
 
 //check
 $user_id = $_SESSION['user_id'];
