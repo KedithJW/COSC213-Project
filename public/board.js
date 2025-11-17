@@ -57,7 +57,8 @@ $(document).ready(function() {
     const card = $(this).closest(".card");
     const listGroup = card.find(".list-group");
 
-    const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
+    //const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
+    const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
     // Create new text area
     const newText = $('<textarea>').addClass("form-control task-name").text("Another one");
     // Eventually will implement more than just text area... so put inside a <div>
@@ -68,9 +69,7 @@ $(document).ready(function() {
     const newTask = $("<li>").addClass("list-group-item new-task");
 
     // Append it to the list
-    //newTaskDiv.append(newDeleteBtn);
-    //newTaskDiv.append(newText);
-    newTask.append(newDeleteBtn, newText);
+    newTask.append(completeBtn ,newText);
     listGroup.append(newTask);
     newText.focus();
   });
