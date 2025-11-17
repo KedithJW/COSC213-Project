@@ -50,14 +50,14 @@ class TaskRepo {
     }
 
     // READ
-    public function getAllTasks() : array {
+    public function getAllTasks($cardId) : array {
       try {
         $conn = $this->connect();
-        $stmt = $conn->prepare("SELECT id, name, card_id FROM Task");
+        $stmt = $conn->prepare("SELECT id, name, card_id FROM Task WHERE card_id = :cardId");
+        $stmt->bindParam(":cardId", $cardId);
         $stmt->execute();
-
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
-      
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);      
       } catch(PDOException $error) {
           throw new Exception("Database error: " . $error->getMessage());
       } 

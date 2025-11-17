@@ -77,7 +77,7 @@ $(document).ready(function() {
 
   //CREATE CARD HERE
   async function createCard(cardName, newCard) {
-    const url = '/../COSC213-PROJECT/api/addCard.php';
+    const url = '/../213Project/api/addCard.php';
     const cardData = {cardname: cardName}; // seems redundant but trying to reformat for JSON
 
     
@@ -97,7 +97,7 @@ $(document).ready(function() {
 
   // create-task function for eventListener below
   async function createTask(taskName, cardId, taskListItem) {
-    const url = '/../COSC213-PROJECT/api/addTask.php';
+    const url = '/../213Project/api/addTask.php';
     const taskData = {taskname: taskName,
                       cardid: cardId}; // seems redundant but trying to reformat for JSON
 
@@ -117,7 +117,7 @@ $(document).ready(function() {
   }
 
   async function deleteCard(cardId) {
-    const url = '/../COSC213-PROJECT/api/deleteCard.php'
+    const url = '/../213Project/api/deleteCard.php'
     const cardData = {cardid: cardId};
 
     fetch(url, {
@@ -137,7 +137,7 @@ $(document).ready(function() {
   }
 
   async function deleteTask(taskId) {
-    const url = '/../COSC213-PROJECT/api/deleteTask.php'
+    const url = '/../213Project/api/deleteTask.php'
     const taskData = {taskid: taskId};
 
     fetch(url, {
@@ -157,7 +157,7 @@ $(document).ready(function() {
   }
   // UPDATE card
   async function updateCard(cardId, cardName) {
-    const url = '/../COSC213-PROJECT/api/updateCard.php'
+    const url = '/../213Project/api/updateCard.php'
     const cardData = {cardid: cardId,
                       cardname: cardName};
 
@@ -181,7 +181,7 @@ $(document).ready(function() {
   }
   // updateTask function
   async function updateTask(taskId, taskName) {
-    const url = '/../COSC213-PROJECT/api/updateTask.php'
+    const url = '/../213Project/api/updateTask.php'
     const taskData = {taskid: taskId,
                       taskname: taskName};
 
@@ -205,7 +205,6 @@ $(document).ready(function() {
   }
   // Add card to DOM (for readinig cards from db)
   function addCardToDom(card) {
-    //const board = $('#board-1');
 
     const colDiv = $("<div>").addClass("col-auto px-2");
     const cardDiv = $("<div>").addClass("card existing-card").attr("id", `card-${card.id}`).css("width", "18rem");
@@ -224,7 +223,7 @@ $(document).ready(function() {
   }
   // Add task to DOM (for reading tasks from db)
   function addTaskToDom(task) {
-    const card = $(`#card-${task.card_id}`); // This is correct, above line confirms
+    const card = $(`#card-${task.card_id}`);
     const listGroup = card.find('.list-group');
 
     // Create delete btn
@@ -250,30 +249,11 @@ $(document).ready(function() {
       taskElement.remove();
     }
   }
-  // READ cards
-  async function loadCards() {
-    try {
-      console.log('Getting cards...');
-      const response = await fetch('/../COSC213-PROJECT/api/getCards.php')
-      const data = await response.json();
-
-      if (data.success) {
-        data.cards.forEach(card => {
-          //create html element and append...
-          addCardToDom(card);
-        });
-      } else {
-          console.error('Failed to load cards:', data.error);
-      }
-    } catch(err) {
-        console.error('Error fetching cards:', err);
-    }
-  }
-  // READ tasks function
-  async function loadTasks() {
+  //READ Tasks
+  async function loadTasks(cardId) {
     try {
       console.log('Getting tasks...');
-      const response = await fetch('/../COSC213-PROJECT/api/getTasks.php')
+      const response = await fetch(`/../213Project/api/getTasks.php?cardId=${cardId}`)
       console.log("HTTP status:", response.status);
       const data = await response.json();
       // for trouble shooting: run next two lines instead above line
@@ -293,10 +273,33 @@ $(document).ready(function() {
         console.error('Error fetching tasks:', err);
     }
   }
+  // READ cards
+  async function loadCards(boardId) {
+    try {
+      console.log('Getting cards...');
+      const response = await fetch(`/../213Project/api/getCards.php?boardId=${boardId}`)
+      const data = await response.json();
+
+      if (data.success) {
+        data.cards.forEach(card => {
+          //create html element and append...
+          addCardToDom(card);
+          loadTasks(card.id);
+        });
+      } else {
+          console.error('Failed to load cards:', data.error);
+      }
+    } catch(err) {
+        console.error('Error fetching cards:', err);
+    }
+  }
 
   // page load event listener
   $(document).ready(() => {
-    loadCards().then(loadTasks);
+    const params = new URLSearchParams(window.location.search);
+    const boardId = params.get("id");
+    // leave out for now until I've got loadTasks working
+    loadCards(boardId);
   });
 
   // keydown event listener

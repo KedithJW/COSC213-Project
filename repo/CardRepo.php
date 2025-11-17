@@ -49,10 +49,11 @@ class CardRepo {
     }
 
     // READ
-    public function getAllCards() : array {
+    public function getAllCards($boardId) : array {
       try {
         $conn = $this->connect();
-        $stmt = $conn->prepare("SELECT id, name FROM Card");
+        $stmt = $conn->prepare("SELECT id, name, board_id FROM Card WHERE board_id = :boardId");
+        $stmt->bindParam(":boardId", $boardId);
         $stmt->execute();
 
       return $stmt->fetchAll(PDO::FETCH_ASSOC);
