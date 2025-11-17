@@ -2,14 +2,13 @@
 session_start(); // Starts the session for login tracking
 
 $host = 'localhost';
-$port = '8889'; 
 $db   = 'COSC213';
 $user = 'Admin';
 $pass = '';
 $message = '';
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
+    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
