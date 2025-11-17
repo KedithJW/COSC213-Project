@@ -27,9 +27,9 @@
 */
 $host = 'localhost';
 $port = '8889'; 
-$db   = 'COSC213';
-$user = 'Admin';
-$pass = '';
+$db   = '213Project';
+$user = 'root';
+$pass = 'root';
 
 $message = '';
 

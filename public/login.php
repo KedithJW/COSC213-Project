@@ -3,9 +3,9 @@ session_start(); // Starts the session for login tracking
 
 $host = 'localhost';
 $port = '8889'; 
-$db   = 'COSC213';
-$user = 'Admin';
-$pass = '';
+$db   = '213Project';
+$user = 'root';
+$pass = 'root';
 $message = '';
 
 try {
@@ -29,7 +29,7 @@ try {
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
-                    header("Location: board.php");
+                    header("Location: temp-index.php"); // REVERT FILE NAME AFTER MAMP TESTING
                     exit;
                 } else {
                     $message = "Incorrect password.";
