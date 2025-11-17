@@ -1,14 +1,6 @@
-
-
 <?php
-<<<<<<< Updated upstream
-// Right now, there is no php backend, so we simulate login with JavaScript, i just copied the code from a prev project. It can be changed later once we have a backend and i am more familiar with php. 
-// The home button is also set to go to Homepage.html, becuase i dont know what page we are making the home page. (very easy change) 
-// The temp password is "password" and the temp username is "admin" as shown in line 125, it should just send you back the previous page on success, the code is literally hitting chromes back button.
-// I also eyeballed the coulors and stuff, it can be changed later too.
-=======
-session_start(); //starts the session, will, need similar code on any page that needs to check if user is logged in, see logout.php for the code that is needed
-//for main push
+session_start(); // Starts the session for login tracking
+
 $host = 'localhost';
 $db   = 'cosc213project';
 $user = 'root';
@@ -50,127 +42,71 @@ try {
 } catch (PDOException $e) {
     $message = "Database error: " . $e->getMessage();
 }
->>>>>>> Stashed changes
 ?>
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Manager</title>
-    <style>
-        body {
-            background-color: #007BFF;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-
-        .header {
-            width: 100%;
-            background-color: #333;
-            padding: 10px;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .header button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-
-        .login-form {
-            background-color: #ffffff;
-            padding: 30px;
-            width: 400px;
-            border: 1px solid #ccc;
-        }
-
-        .login-form h2 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .login-form input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #aaa;
-        }
-
-        .login-form button {
-            width: 100%;
-            padding: 10px;
-            background-color: #333;
-            color: white;
-            border: none;
-        }
-
-        #message {
-            color: red;
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - Project Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
-<body>
+<body class="bg-primary bg-gradient text-white">    
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container-fluid">
+            <a href="#" class="navbar-brand px-5">APP NAME</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navmenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">Account</a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
+                            <li><a class="dropdown-item" href="login.php">Login</a></li>
+                            <li><a class="dropdown-item" href="register.php">Sign Up</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-<div class="header">
-    <button onclick="location.href='HomePage.php';">HOME</button>
-</div>
+    <main class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow" style="width: 100%; max-width: 500px;">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Login to Your Account</h3>
+                <form method="post" action="login.php">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required
+                            value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required
+                            value="<?php echo htmlspecialchars($_POST['password'] ?? ''); ?>">
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">Login</button>
+                    <div class="mt-3 text-center">
+                        <p>Need an account? <a href="register.php">Register here</a></p>
+                    </div>
+                </form>
+                <?php if ($message): ?>
+                    <div class="alert alert-danger mt-3 text-center" role="alert">
+                        <?php echo htmlspecialchars($message); ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </main>
 
-<div class="login-form">
-    <h2>Login</h2>
-    <form id="loginForm">
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
-    <p id="message"></p>
-</div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#loginForm').on('submit', function(e) {
-            e.preventDefault();
-            var username = $('#username').val();
-            var password = $('#password').val();
-
-            if (username.length < 3 || username.length > 20) {
-                $('#message').text('Username must be between 3 and 20 characters.');
-                return;
-            }
-            if (password.length < 6 || password.length > 20) {
-                $('#message').text('Password must be between 6 and 20 characters.');
-                return;
-            }
-
-            setTimeout(function() {
-                var WeNoHaveServer = {
-                    success: (username === 'admin' && password === 'password')
-                };
-                if (WeNoHaveServer.success) {
-                    localStorage.setItem('loggedInUser', username);
-                    $('#message').css('color', 'green').text('Login successful!');
-                    window.history.back();
-                } else {
-                    $('#message').text('Invalid username or password.');
-                }
-            }, 50);
-        });
-    });
-</script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 </body>
 </html>

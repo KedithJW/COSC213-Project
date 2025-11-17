@@ -1,47 +1,37 @@
 <?php
 /*
-    Notes/stuff to talk about with team
-    Testing registration page, connects to database and adds user info if valid, but i never actually got a chance to test the conencting to a database part. Couldnt figure out how to set one up on my local machine
-    -- shouldnt be much of a difference to the code here just changing the connection parameters $host, $db etc right below this paragraph. 
-    I also saw on Trello's sign up page then has some terms and conditions, we could add something like that to fill the void, as well a some photos in the bottom and a the Brand name, ex Trello has "Trello" "terms and condition, then a sign up button.
-    Colour and stuff can also be changed as I built it off the login.php. this would be a seperate file tho. this is register.php that redirects to login.php on successful registration
-    ------ I also made some notes throughout the file, re the dropdown and some of the security stuff, idk if we want to keep that sec stuff or not but its there if we do. Wasnt very hard to implement so idc if we get rid of it.
-<<<<<<< Updated upstream
-    Re the Dropdown i also added the alternate code in the html section at the bottom, just a Already have an acount thingy.
-    Do we want to add a confirm password field as well, and should be add more checks for a secure passwrd like a !@#%^& requirment.
-=======
-    Re the Dropdown i also added the alternate code in the html section at the bottom, just a Already have an account thingy.
-    Do we want to add a confirm password field as well, and should we add more checks for a secure password like a !@#%^& requirement.
+    Notes/stuff to talk about with team:
+    - Testing registration page: connects to database and adds user info if valid. I haven’t tested DB connection yet — couldn’t figure out how to set one up locally.
+    - Shouldn’t be much difference in code — just change $host, $db, etc.
+    - Trello’s signup page has terms and conditions, branding, and photos — we could add similar elements.
+    - Colors and layout are based on login.php, but this is a separate file (register.php) that redirects to login.php on success.
+    - I added notes throughout the file about dropdowns and security. Not hard to implement, so we can keep or remove.
+    - Re the dropdown: I added alternate HTML at the bottom — “Already have an account?” link.
+    - Should we add a confirm password field?
+    - Should we enforce stronger password rules (e.g., require symbols like !@#%^&)?
 
-    For Reference :
-    This is the sql code i used to make the users table in the database
-    
+    For reference, here’s the SQL used to create the `users` table:
+
     CREATE TABLE users (
-    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    phone VARCHAR(20),
-    username VARCHAR(30) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id),
-    UNIQUE (email),
-    UNIQUE (username)
-)
-
-
-
-For Main Push
-
->>>>>>> Stashed changes
+        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        first_name VARCHAR(50) NOT NULL,
+        last_name VARCHAR(50) NOT NULL,
+        email VARCHAR(100) NOT NULL,
+        phone VARCHAR(20),
+        username VARCHAR(30) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        PRIMARY KEY (id),
+        UNIQUE (email),
+        UNIQUE (username)
+    );
 */
-$host = 'localhost'; // Change these to our db info
-$db   = 'database_name';
-$user = 'db_user';
-$pass = 'db_password';
+
+$host = 'localhost';
+$db   = 'COSC213';
+$user = 'Admin';
+$pass = '';
 
 $message = '';
-$success = false;
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
@@ -55,25 +45,23 @@ try {
         $username  = trim($_POST['username']);
         $password  = $_POST['password'];
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { // php's built in email validation
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $message = "Invalid email format.";
         } elseif (strlen($username) < 3 || strlen($username) > 20) {
             $message = "Username must be between 3 and 20 characters.";
         } elseif (strlen($password) < 6 || strlen($password) > 20) {
             $message = "Password must be between 6 and 20 characters.";
-        } else if (strlen($phone) != 10 || !ctype_digit($phone)){
+        } elseif (strlen($phone) != 10 || !ctype_digit($phone)) {
             $message = "Please input a valid 10-digit phone number. Do not add dashes or parentheses.";
-        }else {
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email OR username = :username"); 
+        } else {
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email OR username = :username");
             $stmt->execute(['email' => $email, 'username' => $username]);
-            //This checks for uniqueness, we cant have 2 emails/usersnames in the db that are the same 
 
             if ($stmt->rowCount() > 0) {
                 $message = "Email or username already exists.";
             } else {
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // requiremnt to hash passwords, usese php's default hashing alogrithm
-            // uses PDO prepared statements to prevent SQL injection per project requirments.
-                $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, phone, username, password) 
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, phone, username, password)
                                        VALUES (:first_name, :last_name, :email, :phone, :username, :password)");
                 $stmt->execute([
                     'first_name' => $firstName,
@@ -84,165 +72,100 @@ try {
                     'password'   => $hashedPassword
                 ]);
 
-                header("Location: login.php"); // Redirect to login page after successful registration
+                header("Location: login.php");
                 exit;
             }
         }
-    }        
+    }
 } catch (PDOException $e) {
-    $message = "Database error: " . $e->getMessage(); // says when we arnt connected to a db
+    $message = "Database error: " . $e->getMessage();
 }
 ?>
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Register - Project Manager</title>
-    <style>
-        body {
-            background-color: white;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-
-        .header {
-            width: 100%;
-            background-color: rgba(51, 51, 51, 0.9);
-            padding: 10px 20px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-
-        .header .left button,
-        .dropbtn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 10px;
-            margin: 0;
-        }
-
-        .header .right {
-            position: relative;
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: #f9f9f9;
-            min-width: 120px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-
-        .dropdown-content a {
-            color: black;
-            padding: 10px 12px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #ddd;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .login-form {
-            background-color: #ffffff;
-            padding: 30px;
-            width: 400px;
-            border: 1px solid #ccc;
-            margin-top: 80px;
-        }
-
-        .login-form h2 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .login-form input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #aaa;
-        }
-
-        .login-form button {
-            width: 100%;
-            padding: 10px;
-            background-color: #333;
-            color: white;
-            border: none;
-        }
-
-        #message {
-            color: red;
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
-<body>
-
-<div class="header">
-    <div class="left">
-        <button onclick="location.href='index.php';">App Name</button>
-    </div>
-    <div class="right">
-        <div class="dropdown">
-            <button class="dropbtn">Accounts</button>
-            <div class="dropdown-content">
-                <a href="login.php">Login</a>
-                <a href="justforshow.php"> justforshow</a>
+<body class="bg-primary bg-gradient text-white">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container-fluid">
+            <a href="#" class="navbar-brand px-5">APP NAME</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navmenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">Account</a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
+                            <li><a class="dropdown-item" href="login.php">Login</a></li>
+                            <li><a class="dropdown-item" href="register.php">Sign Up</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
-    </div>
-</div>
+    </nav>
 
-<div class="login-form">
-    <h2>Register Your New Account</h2>
-    <form method="post" action="register.php">
-        <input type="text" name="firstName" placeholder="First Name" required>
-        <input type="text" name="lastName" placeholder="Last Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="text" name="phone" placeholder="Phone Number" required>
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Register</button>
-        <p> Want to login instead? </p> <a href="login.php">Click here</a></p>
-    </form>
+    
+    <main class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card bg-white text-dark shadow" style="width: 100%; max-width: 600px;">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Register Your New Account</h3>
+                <form method="post" action="register.php">
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" name="firstName" required
+                            value="<?php echo htmlspecialchars($_POST['firstName'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" name="lastName" required
+                            value="<?php echo htmlspecialchars($_POST['lastName'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required
+                            value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" name="phone" required
+                            value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" required
+                            value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required
+                            value="<?php echo htmlspecialchars($_POST['password'] ?? ''); ?>">
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">Register</button>
+                    <div class="mt-3 text-center">
+                        <p>Already have an account? <a href="login.php">Login here</a></p>
+                    </div>
+                </form>
+                <?php if ($message): ?>
+                    <div class="alert alert-danger mt-3 text-center" role="alert">
+                        <?php echo htmlspecialchars($message); ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </main>
 
-    <?php
-    if ($message) {
-        echo '<p id="message">' . htmlspecialchars($message) . '</p>';  
-        // was suggested in videos i watched about sql injection stuff, this prevents html injection / cross site scripting i dont rlly know to much about it tho, this is done by the htrmlspecialchars function
-    }
-    ?>
-</div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 </body>
 </html>
