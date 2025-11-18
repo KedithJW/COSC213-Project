@@ -1,41 +1,5 @@
 <?php
-/*
-    Notes/stuff to talk about with team:
-    - Testing registration page: connects to database and adds user info if valid. I haven’t tested DB connection yet — couldn’t figure out how to set one up locally.
-    - Shouldn’t be much difference in code — just change $host, $db, etc.
-    - Trello’s signup page has terms and conditions, branding, and photos — we could add similar elements.
-    - Colors and layout are based on login.php, but this is a separate file (register.php) that redirects to login.php on success.
-    - I added notes throughout the file about dropdowns and security. Not hard to implement, so we can keep or remove.
-    - Re the dropdown: I added alternate HTML at the bottom — “Already have an account?” link.
-    - Should we add a confirm password field?
-    - Should we enforce stronger password rules (e.g., require symbols like !@#%^&)?
-
-    For reference, here’s the SQL used to create the `users` table:
-
-    CREATE TABLE users (
-        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-        first_name VARCHAR(50) NOT NULL,
-        last_name VARCHAR(50) NOT NULL,
-        email VARCHAR(100) NOT NULL,
-        phone VARCHAR(20),
-        username VARCHAR(30) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        PRIMARY KEY (id),
-        UNIQUE (email),
-        UNIQUE (username)
-    );
-*/
-$host = 'localhost';
-$port = '8889'; 
-$db   = '213Project';
-$user = 'root';
-$pass = 'root';
-
-$message = '';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+require_once '../repo/db_connect.php';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $firstName = trim($_POST['firstName']);
@@ -77,9 +41,6 @@ try {
             }
         }
     }
-} catch (PDOException $e) {
-    $message = "Database error: " . $e->getMessage();
-}
 ?>
 
 <!doctype html>

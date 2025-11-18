@@ -9,6 +9,7 @@ CREATE TABLE board_members(
     id INT PRIMARY KEY AUTO_INCREMENT,
     board_id INT,
     user_id INT,
+    role enum('owner', 'member') DEFAULT 'member',
     role enum('owner', 'member') DEFAULT member,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -25,3 +26,17 @@ CREATE TABLE users (
   UNIQUE (email),
   UNIQUE (username)
 );
+
+CREATE TABLE task (
+  id int PRIMARY KEY auto_increment	
+  name varchar(50),		
+  card_id	int	
+);
+
+CREATE TABLE card (
+  id int PRIMARY KEY auto_increment,
+  name	varchar(50),		
+  board_id int		
+);
+
+

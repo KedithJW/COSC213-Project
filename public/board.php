@@ -1,4 +1,9 @@
 <?php
+require_once '../repo/db_connect.php';
+require_once '../repo/auth.php';
+?>
+
+<?php
     include __DIR__ . "/../templates/header.html";
 ?>
 

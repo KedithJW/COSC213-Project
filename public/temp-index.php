@@ -1,12 +1,9 @@
 <?php
-session_start(); //starts the session
+
 require_once '../repo/db_connect.php';  
 
 //if no one logged in redirect to login 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once '../repo/auth.php';
 
 //check
 $user_id = $_SESSION['user_id'];
@@ -93,7 +90,7 @@ $boards = $stmt->fetchAll(); // array container for all boards
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
-                            <li><a class="dropdown-item" href="login.php">Logout</a></li>
+                            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                         </ul>
                     </li>
                 </ul>

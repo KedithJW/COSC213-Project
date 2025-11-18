@@ -11,18 +11,21 @@ $message = '';
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+session_start();
+require_once '../repo/db_connect.php';
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = trim($_POST['username']);
-        $password = $_POST['password'];
 
-        if (strlen($username) < 3 || strlen($username) > 20) {
-            $message = "Username must be between 3 and 20 characters.";
-        } elseif (strlen($password) < 6 || strlen($password) > 20) {
-            $message = "Password must be between 6 and 20 characters.";
-        } else {
-            $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
-            $stmt->execute(['username' => $username]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
+
+    if (strlen($username) < 3 || strlen($username) > 20) {
+        $message = "Username must be between 3 and 20 characters.";
+    } elseif (strlen($password) < 6 || strlen($password) > 20) {
+        $message = "Password must be between 6 and 20 characters.";
+    } else {
+        $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
+        $stmt->execute(['username' => $username]);
 
             if ($stmt->rowCount() === 1) {
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
