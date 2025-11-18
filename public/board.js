@@ -1,6 +1,6 @@
 console.log("Script loaded!");
 //////// board.php scripts //////////
-
+let boardId; // declare here for global access
 $(document).ready(function() {
 
   // Add card script
@@ -60,28 +60,27 @@ $(document).ready(function() {
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
     // Create new text area
-    const newText = $('<textarea>').addClass("form-control task-name flex-grow-1").text("Another one").css({height: "auto"});
+    const newText = $('<textarea>').addClass("form-control task-name").text("Another one");
     // Eventually will implement more than just text area... so put inside a <div>
     // The div will represent the task object... childNodes are the attributes
     // So id should be assigned to div... update task then needs to use this id
     //const newTaskDiv = $('<div>').addClass("new-task");
     // Create a new task list item
-    const newTaskDiv = $('<div>').addClass("d-flex align-items-start gap-2 w-100");
     const newTask = $("<li>").addClass("list-group-item new-task");
 
     // Append it to the list
-    newTaskDiv.append(newDeleteBtn, completeBtn ,newText);
-    newTask.append(newTaskDiv);
+    newTask.append(newDeleteBtn, completeBtn ,newText);
     listGroup.append(newTask);
     newText.focus();
   });
 
   //CREATE CARD HERE
-  async function createCard(cardName, newCard) {
+  async function createCard(cardName, boardId, newCard) {
     const url = '/../COSC213-PROJECT/api/addCard.php';
-    const cardData = {cardname: cardName}; // seems redundant but trying to reformat for JSON
+    const cardData = {cardname: cardName,
+                      boardid: boardId};
 
-    
+    console.log("Sending to server:", cardData);
     fetch(url, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'}, // looks like directory but it's actually a MIME type
@@ -294,12 +293,23 @@ $(document).ready(function() {
         console.error('Error fetching cards:', err);
     }
   }
+  // READ board name
+  async function loadBoardName() {
+    const params = new URLSearchParams(window.location.search);
+    const boardName = params.get("name");
+    
+    if (boardName) {
+        // Decode it (in case it was URL-encoded)
+        document.getElementById("board-title").textContent = decodeURIComponent(boardName);
+    }
+  }
 
   // page load event listener
   $(document).ready(() => {
     const params = new URLSearchParams(window.location.search);
-    const boardId = params.get("id");
-    // leave out for now until I've got loadTasks working
+    boardId = Number(params.get("id")) || 0;
+    console.log(`board id: ${boardId}`);
+    loadBoardName();
     loadCards(boardId);
   });
 
@@ -322,9 +332,7 @@ $(document).ready(function() {
               //console.log("Detected cardId:", cardId);
               createTask(taskName, cardId, event.target.parentNode);
               //change task div class to existing-task... this will help separate CRUD operations
-              const task = event.target.closest('.new-task');
-              task.classList.remove('new-task');
-              task.classList.add('existing-task');
+              event.target.parentNode.classList.replace('new-task', 'existing-task');
             }
         }
         // UPDATE Task
@@ -345,7 +353,8 @@ $(document).ready(function() {
           && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
             const cardName = event.target.value;
             if(cardName) {
-              createCard(cardName, $(event.target).closest('div.new-card'));
+              console.log(`creating card with board id ${boardId}`);
+              createCard(cardName, boardId, $(event.target).closest('div.new-card'));
               $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
             }
         }

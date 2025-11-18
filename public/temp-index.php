@@ -139,7 +139,7 @@ $boards = $stmt->fetchAll(); // array container for all boards
                             
                             <!-- Load user boards -->
                             <?php foreach ($boards as $board): ?>
-                                <a href="board.php?id=<?= $board['id'] ?>" class="btn btn-dark bg-gradient"
+                                <a href="board.php?id=<?= $board['id'] ?>&name=<?= urlencode($board['name'])?>" class="btn btn-dark bg-gradient"
                                     style="height: 100px; width: 25%; opacity:0.8; margin-top: 50px; position:relative; max-width:225px; min-width: 225px; text-decoration: none;">
 
                                     <div class="btn-label bg-dark"

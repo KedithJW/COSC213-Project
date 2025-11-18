@@ -5,14 +5,14 @@
     <!-- PROJECT HEADER -->
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
-            <p class="navbar-brand">--project name--</p>
+            <span id="board-title" class="navbar-brand"></span>
             <button 
                 class="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#navmenu"
             >
-                <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span>
             </button>   
             
             <div class="collapse navbar-collapse" id="navmenu">

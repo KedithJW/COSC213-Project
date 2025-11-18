@@ -16,20 +16,23 @@ if ($data === null) {
 }
 
 $cardName = $data['cardname'] ?? null; 
-
+$boardId = $data['boardid'] ?? null;
 // Basic validation
 if (!$cardName) {
     http_response_code(400);
     echo json_encode(["error" => "Missing card name"]);
     exit;
 }
+if (!$boardId) {
+    http_response_code(400);
+    echo json_encode(["error" => "Missing card id"]);
+    exit;
+}
 
 ////// now pass to repo
 try {
     $cardRepo = new CardRepo(); 
-    $cardId = "card-" . $cardRepo->addCard($cardName);
-
-    echo $cardId;
+    $cardId = "card-" . $cardRepo->addCard($cardName, (int)$boardId);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
