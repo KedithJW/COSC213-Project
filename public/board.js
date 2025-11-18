@@ -60,16 +60,18 @@ $(document).ready(function() {
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
     // Create new text area
-    const newText = $('<textarea>').addClass("form-control task-name").text("Another one");
+    const newText = $('<textarea>').addClass("form-control task-name flex-grow-1").text("Another one").css({height: "auto"});
     // Eventually will implement more than just text area... so put inside a <div>
     // The div will represent the task object... childNodes are the attributes
     // So id should be assigned to div... update task then needs to use this id
     //const newTaskDiv = $('<div>').addClass("new-task");
     // Create a new task list item
+    const newTaskDiv = $('<div>').addClass("d-flex align-items-start gap-2 w-100");
     const newTask = $("<li>").addClass("list-group-item new-task");
 
     // Append it to the list
-    newTask.append(newDeleteBtn, completeBtn ,newText);
+    newTaskDiv.append(newDeleteBtn, completeBtn ,newText);
+    newTask.append(newTaskDiv);
     listGroup.append(newTask);
     newText.focus();
   });
@@ -320,7 +322,9 @@ $(document).ready(function() {
               //console.log("Detected cardId:", cardId);
               createTask(taskName, cardId, event.target.parentNode);
               //change task div class to existing-task... this will help separate CRUD operations
-              event.target.parentNode.classList.replace('new-task', 'existing-task');
+              const task = event.target.closest('.new-task');
+              task.classList.remove('new-task');
+              task.classList.add('existing-task');
             }
         }
         // UPDATE Task
