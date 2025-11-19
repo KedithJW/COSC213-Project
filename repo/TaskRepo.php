@@ -34,7 +34,7 @@ class TaskRepo {
     }
 
     // UPDATE
-    public function updateTask($id, $name) {
+    public function updateTaskName($id, $name) {
       try {
         $conn = $this->connect();
         $stmt = $conn->prepare("UPDATE Task SET name = :name WHERE id = :id");
@@ -53,7 +53,7 @@ class TaskRepo {
     public function getAllTasks($cardId) : array {
       try {
         $conn = $this->connect();
-        $stmt = $conn->prepare("SELECT id, name, card_id FROM Task WHERE card_id = :cardId");
+        $stmt = $conn->prepare("SELECT id, name, card_id, status FROM Task WHERE card_id = :cardId");
         $stmt->bindParam(":cardId", $cardId);
         $stmt->execute();
         
@@ -75,6 +75,20 @@ class TaskRepo {
       } catch(PDOException $error) {
           return $error->getMessage();
       } 
+    }
+
+    // UPDATE task status
+    public function completeTask($id) {
+      try {
+        $conn = $this->connect();
+        $stmt = $conn->prepare("UPDATE Task SET status = true WHERE id = :id");
+        $stmt->execute([
+          ':id' => $id
+        ]);
+        return true;
+      } catch(PDOException $error) {
+          return $error->getMessage();
+      }  
     }
 }
 
