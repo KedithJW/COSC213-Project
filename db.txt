@@ -21,6 +21,7 @@ CREATE TABLE users (
   phone VARCHAR(20),
   username VARCHAR(30) NOT NULL,
   password VARCHAR(255) NOT NULL,
+  profile_picture varchar(255),
   PRIMARY KEY (id),
   UNIQUE (email),
   UNIQUE (username)
