@@ -17,12 +17,13 @@ class CardRepo {
     }
 
     // CREATE
-    public function addCard($name) { //adds Card
+    public function addCard($name, $boardId) { //adds Card
       try {
         $conn = $this->connect();
-        $stmt = $conn->prepare("INSERT INTO Card (name) VALUES (:name)");
+        $stmt = $conn->prepare("INSERT INTO Card (name, board_id) VALUES (:name, :board_id)");
         $stmt->execute([
-          ':name' => $name
+          ':name' => $name,
+          ':board_id' => $boardId
         ]);
 
         //echo "Record added successfully. ";

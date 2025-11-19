@@ -1,4 +1,16 @@
 <?php
+session_start(); // Starts the session for login tracking
+
+$host = 'localhost';
+$port = '8889'; 
+$db   = '213Project';
+$user = 'root';
+$pass = 'root';
+$message = '';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 session_start();
 require_once '../repo/db_connect.php';
 
@@ -15,20 +27,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
         $stmt->execute(['username' => $username]);
 
-        if ($stmt->rowCount() === 1) {
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $username;
-                header("Location: index.php");
-                exit;
+            if ($stmt->rowCount() === 1) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (password_verify($password, $user['password'])) {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $username;
+                    header("Location: temp-index.php"); // REVERT FILE NAME AFTER MAMP TESTING
+                    exit;
+                } else {
+                    $message = "Incorrect password.";
+                }
             } else {
-                $message = "Incorrect password.";
+                $message = "Username not found.";
             }
-        } else {
-            $message = "Username not found.";
         }
     }
+} catch (PDOException $e) {
+    $message = "Database error: " . $e->getMessage();
 }
 ?>
 

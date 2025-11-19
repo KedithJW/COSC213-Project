@@ -4,9 +4,7 @@ require __DIR__ . '/../repo/TaskRepo.php';
 // Allow JSON requests
 header("Content-Type: application/json");
 
-$rawData = file_get_contents("php://input"); // JSON uses this instead of $_POST
-
-// Decode the JSON into a PHP associative array
+$rawData = file_get_contents("php://input"); 
 $data = json_decode($rawData, true);
 
 if ($data === null) {
@@ -15,10 +13,9 @@ if ($data === null) {
     exit;
 }
 $taskId = $data['taskid'];
-$taskName = $data['taskname'] ?? null; 
 
 // Basic validation
-if (!$taskName || !$taskId) {
+if (!$taskId) {
     http_response_code(400);
     echo json_encode(["error" => "Missing task info"]);
     exit;
@@ -27,17 +24,15 @@ if (!$taskName || !$taskId) {
 ////// now pass to repo
 try {
     $taskRepo = new TaskRepo(); 
-    $taskRepo->updateTask($taskId, $taskName);
+    $taskRepo->completeTask($taskId);
 
     // Example: save or process the task (for now just respond)
     $response = [
         "success" => true,
-        "message" => "Task updated successfully",
-        "taskName" => $taskName
+        "message" => "Task status updated successfully"
     ];
-
-    // Return JSON response
     echo json_encode($response);
+    
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([

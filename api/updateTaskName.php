@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../repo/CardRepo.php';
+require __DIR__ . '/../repo/TaskRepo.php';
 
 // Allow JSON requests
 header("Content-Type: application/json");
@@ -14,25 +14,30 @@ if ($data === null) {
     echo json_encode(["error" => "Invalid JSON received"]);
     exit;
 }
+$taskId = $data['taskid'];
+$taskName = $data['taskname'] ?? null; 
 
-$cardName = $data['cardname'] ?? null; 
-$boardId = $data['boardid'] ?? null;
 // Basic validation
-if (!$cardName) {
+if (!$taskName || !$taskId) {
     http_response_code(400);
-    echo json_encode(["error" => "Missing card name"]);
-    exit;
-}
-if (!$boardId) {
-    http_response_code(400);
-    echo json_encode(["error" => "Missing card id"]);
+    echo json_encode(["error" => "Missing task info"]);
     exit;
 }
 
 ////// now pass to repo
 try {
-    $cardRepo = new CardRepo(); 
-    $cardId = "card-" . $cardRepo->addCard($cardName, (int)$boardId);
+    $taskRepo = new TaskRepo(); 
+    $taskRepo->updateTaskName($taskId, $taskName);
+
+    // Example: save or process the task (for now just respond)
+    $response = [
+        "success" => true,
+        "message" => "Task updated successfully",
+        "taskName" => $taskName
+    ];
+
+    // Return JSON response
+    echo json_encode($response);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
