@@ -1,5 +1,5 @@
 <?php
-
+//connect to db 
 require_once '../repo/db_connect.php';  
 
 //if no one logged in redirect to login 
