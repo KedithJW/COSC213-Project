@@ -117,7 +117,7 @@ $(document).ready(function() {
   }
 
   async function deleteCard(cardId) {
-    const url = '/../COSC213-PROJECT/api/deleteCard.php'
+    const url = '/../COSC213-PROJECT/api/deleteCard.php';
     const cardData = {cardid: cardId};
 
     fetch(url, {
@@ -137,7 +137,7 @@ $(document).ready(function() {
   }
 
   async function deleteTask(taskId) {
-    const url = '/../COSC213-PROJECT/api/deleteTask.php'
+    const url = '/../COSC213-PROJECT/api/deleteTask.php';
     const taskData = {taskid: taskId};
 
     fetch(url, {
@@ -157,7 +157,7 @@ $(document).ready(function() {
   }
   // UPDATE card
   async function updateCard(cardId, cardName) {
-    const url = '/../COSC213-PROJECT/api/updateCard.php'
+    const url = '/../COSC213-PROJECT/api/updateCard.php';
     const cardData = {cardid: cardId,
                       cardname: cardName};
 
@@ -179,9 +179,9 @@ $(document).ready(function() {
         console.error('Error:', error);
     });
   }
-  // updateTask function
-  async function updateTask(taskId, taskName) {
-    const url = '/../COSC213-PROJECT/api/updateTask.php'
+  // updateTaskName function
+  async function updateTaskName(taskId, taskName) {
+    const url = '/../COSC213-PROJECT/api/updateTaskName.php';
     const taskData = {taskid: taskId,
                       taskname: taskName};
 
@@ -203,6 +203,31 @@ $(document).ready(function() {
         console.error('Error:', error);
     });
   }
+
+  //UPDATE Task status
+  async function completeTask(taskId) {
+    const url = '/../COSC213-PROJECT/api/completeTask.php';
+    const taskData = {taskid: taskId}
+
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(taskData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+  }
+
   // Add card to DOM (for readinig cards from db)
   function addCardToDom(card) {
 
@@ -224,6 +249,7 @@ $(document).ready(function() {
   // Add task to DOM (for reading tasks from db)
   function addTaskToDom(task) {
     const card = $(`#card-${task.card_id}`);
+    const status = $(task.status);
     const listGroup = card.find('.list-group');
 
     // Create delete btn
@@ -232,10 +258,16 @@ $(document).ready(function() {
     const newText = $('<textarea>').addClass("form-control task-name").val(task.name);
     // Create a new task list item
     const newTask = $("<li>").addClass("list-group-item existing-task").attr("id", `task-${task.id}`);
-
-    // Append it to the list
-    newTask.append(newDeleteBtn, newText);
-    listGroup.append(newTask);
+    if (status[0] == 1) {
+      const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
+      const completeLabel = $('<span>').addClass('ms-2 complete-label').text('complete');
+      newTask.append(newDeleteBtn, completeBtn, completeLabel, newText);
+      listGroup.append(newTask);
+    } else {
+        const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
+        newTask.append(newDeleteBtn, completeBtn, newText);
+        listGroup.append(newTask);
+    }
   }
 
   function deleteCardFromDom(cardElement) {
@@ -249,6 +281,15 @@ $(document).ready(function() {
       taskElement.remove();
     }
   }
+
+  function completeTaskDom(completeBtn) {
+    if(completeBtn) {
+      btn = $(completeBtn)
+      btn.removeClass('btn-light').addClass('btn-primary').css('pointer-events', 'none');
+      btn.after('<span class="ms-2 complete-label">complete</span>');
+    }
+  }
+
   //READ Tasks
   async function loadTasks(cardId) {
     try {
@@ -344,7 +385,7 @@ $(document).ready(function() {
             const taskId = parseInt(idString.replace('task-', ''), 10);
             const taskName = event.target.value;
             if(taskName) {              
-              updateTask(taskId, taskName);
+              updateTaskName(taskId, taskName);
             }
         }
         // CREATE Card
@@ -401,6 +442,12 @@ $(document).ready(function() {
       const cardId = parseInt(idString.replace('card-', ''), 10);
       deleteCard(cardId);
       deleteCardFromDom($(event.target).closest('div.col-auto'));
+    }
+    if(event.target && event.target.classList.contains('complete-task-btn')) {
+      const idString = event.target.parentNode.id;
+      const taskId = parseInt(idString.replace('task-', ''), 10);
+      completeTask(taskId);
+      completeTaskDom(event.target);
     }
   });
 
