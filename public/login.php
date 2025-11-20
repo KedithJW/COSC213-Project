@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-primary bg-gradient text-white">    
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container-fluid">
-            <a href="#" class="navbar-brand px-5">APP NAME</a>
+            <a href="#" class="navbar-brand px-5">Project Manager</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -54,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">Account</a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
                             <li><a class="dropdown-item" href="login.php">Login</a></li>
                             <li><a class="dropdown-item" href="register.php">Sign Up</a></li>
                         </ul>
