@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profilePic'])) {
         if (move_uploaded_file($_FILES["profilePic"]["tmp_name"], $targetFile)) {
             $stmt = $pdo->prepare("UPDATE users SET profile_picture = :pic WHERE username = :username");
             $stmt->execute(['pic' => $newFilename, 'username' => $username]);
+            $_SESSION['profile_picture'] = $newFilename;
             $uploadmessage = "Profile picture updated!";
         } else {
             $uploadmessage = "Error uploading file.";

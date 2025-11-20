@@ -1,6 +1,6 @@
 <?php
 //connect to db 
-require_once '../repo/db_connect.php';  
+require_once '../repo/db_connect.php';
 
 //if no one logged in redirect to login 
 require_once '../repo/auth.php';
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_board'])) {
     // $stmt is a pdo statement object 
 
     //update board db 
-    $stmt = $pdo->prepare("INSERT INTO board (name, owner_id) VALUES (?,?)");  
+    $stmt = $pdo->prepare("INSERT INTO board (name, owner_id) VALUES (?,?)");
     $stmt->execute([$board_name, $user_id]);
     $new_board_id = $pdo->lastInsertId();
     //update board_members
@@ -37,7 +37,7 @@ $stmt = $pdo->prepare("
     ORDER BY b.created_at DESC
 ");
 
-$stmt->execute([$user_id]); 
+$stmt->execute([$user_id]);
 $boards = $stmt->fetchAll(); // array container for all boards 
 ?>
 
@@ -83,16 +83,25 @@ $boards = $stmt->fetchAll(); // array container for all boards
                             data-bs-target="#myFormModal">Create</a>
                     </li>
                     <!-- Account Dropdown -->
+                    <?php
+                    $username = $_SESSION['username'];
+                    $profilePic = $_SESSION['profile_picture'] ?? 'default.jpg';
+                    ?>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Account
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="me-2">Hey <?= htmlspecialchars($username) ?></span>
+                           <img src="uploads/profiles/<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>" 
+     alt="Profile" 
+     class="rounded-circle" 
+     style="width: 32px; height: 32px; object-fit: cover;" 
+     onerror="this.onerror=null;this.src='uploads/profiles/default.jpg';">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
                             <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                         </ul>
                     </li>
+
                 </ul>
             </div>
         </div>
@@ -128,15 +137,15 @@ $boards = $stmt->fetchAll(); // array container for all boards
                     <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
                         aria-labelledby="v-pills-home-tab">
                         <!-- Boards Content -->
-                        <h2 class="text-left text-white" style="postion:relative; font-size:4vh;">YOUR BOARDS</h2>
+                        <h2 class="text-left text-white" style="position:relative; font-size:4vh;">YOUR BOARDS</h2>
 
 
                         <!-- BOARD WRAPPER -->
                         <div class="board_wrapper" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            
+
                             <!-- Load user boards -->
                             <?php foreach ($boards as $board): ?>
-                                <a href="board.php?id=<?= $board['id'] ?>&name=<?= urlencode($board['name'])?>" class="btn btn-dark bg-gradient"
+                                <a href="board.php?id=<?= $board['id'] ?>&name=<?= urlencode($board['name']) ?>" class="btn btn-dark bg-gradient"
                                     style="height: 100px; width: 25%; opacity:0.8; margin-top: 50px; position:relative; max-width:225px; min-width: 225px; text-decoration: none;">
 
                                     <div class="btn-label bg-dark"
@@ -211,8 +220,8 @@ $boards = $stmt->fetchAll(); // array container for all boards
 
         </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
         </script>
 </body>
 

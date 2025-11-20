@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6 || strlen($password) > 20) {
         $message = "Password must be between 6 and 20 characters.";
     } else {
-        $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
+        $stmt = $pdo->prepare("SELECT id, password, profile_picture FROM users WHERE BINARY username = :username");
         $stmt->execute(['username' => $username]);
 
             if ($stmt->rowCount() === 1) {
@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
+                    $_SESSION['profile_picture'] = $user['profile_picture'] ?? 'default.jpg';
                     header("Location: index.php"); 
                     exit;
                 } else {
