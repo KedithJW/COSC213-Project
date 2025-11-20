@@ -1,19 +1,5 @@
 <?php
-session_start(); // Starts the session for login tracking
-
-$host = 'localhost';
-$port = '8889'; 
-$db   = '213Project';
-$user = 'root';
-$pass = 'root';
-$message = '';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-session_start();
 require_once '../repo/db_connect.php';
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
@@ -32,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
-                    header("Location: temp-index.php"); // REVERT FILE NAME AFTER MAMP TESTING
+                    header("Location: index.php"); // REVERT FILE NAME AFTER MAMP TESTING
                     exit;
                 } else {
                     $message = "Incorrect password.";
@@ -42,9 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-} catch (PDOException $e) {
-    $message = "Database error: " . $e->getMessage();
-}
 ?>
 
 <!doctype html>
