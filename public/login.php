@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../repo/db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
-                    header("Location: index.php"); // REVERT FILE NAME AFTER MAMP TESTING
+                    header("Location: index.php"); 
                     exit;
                 } else {
                     $message = "Incorrect password.";
