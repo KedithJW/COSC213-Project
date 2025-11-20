@@ -47,7 +47,7 @@ $boards = $stmt->fetchAll(); // array container for all boards
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Index - Project Manager </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
@@ -63,49 +63,7 @@ $boards = $stmt->fetchAll(); // array container for all boards
 </head>
 
 <body>
-    <!-- NAVBAR / HEADER -->
-    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-        <div class="container-fluid">
-            <!-- Left: Brand -->
-            <a href="#" class="navbar-brand flex-shrink-0 px-1">Project Task Manager</a>
-
-            <!-- Toggler -->
-            <button class="navbar-toggler flex-shrink-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navmenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Collapsible Content -->
-            <div class="collapse navbar-collapse flex-shrink-0" id="navmenu">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a href="#learn" class="nav-link" data-bs-toggle="modal"
-                            data-bs-target="#myFormModal">Create</a>
-                    </li>
-                    <!-- Account Dropdown -->
-                    <?php
-                    $username = $_SESSION['username'];
-                    $profilePic = $_SESSION['profile_picture'] ?? 'default.jpg';
-                    ?>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="me-2">Hey <?= htmlspecialchars($username) ?></span>
-                           <img src="uploads/profiles/<?= htmlspecialchars($profilePic) ?>?v=<?= time() ?>" 
-     alt="Profile" 
-     class="rounded-circle" 
-     style="width: 32px; height: 32px; object-fit: cover;" 
-     onerror="this.onerror=null;this.src='uploads/profiles/default.jpg';">
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
-                            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
-                        </ul>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php include "../templates/header.php"; ?>
 
     <!-- DASHBOARD -->
     <div class="container-fluid">

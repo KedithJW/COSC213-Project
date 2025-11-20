@@ -99,19 +99,7 @@ $pic = (!empty($user['profile_picture']) && file_exists(__DIR__ . "/uploads/prof
 </head>
 <body class="bg-primary bg-gradient text-white">
 
-<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-    <div class="container-fluid">
-        <a href="#" class="navbar-brand px-5">Project Task Manager</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navmenu">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="index.php">Back to Boards</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<?php include "../templates/header.php"; ?>
 
 <div class="container-fluid">
     <div class="row min-vh-100">
