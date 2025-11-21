@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_board'])) {
     $stmt->execute([$new_board_id, $user_id]);
 
     //send to new board 
-    header("Location: board.php?id=" . $new_board_id);
+    // &name=<?= urlencode($board['name'])
+    header("Location: board.php?id=" . $new_board_id . "&name=" . $board_name);
     exit;
 }
 
