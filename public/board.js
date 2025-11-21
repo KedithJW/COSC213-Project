@@ -447,7 +447,7 @@ $(document).ready(function() {
                 task.removeClass('new-task').addClass('existing-task');
             }
             // UPDATE Task
-            if(task.hasClass('existing-task')) {
+            else if(task.hasClass('existing-task')) {
                 console.log('Updating task...');
                 const idString = task.attr('id');
                 const taskId = parseInt(idString.replace('task-', ''), 10);
