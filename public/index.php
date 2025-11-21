@@ -2,6 +2,9 @@
 //connect to db 
 require_once '../repo/db_connect.php';
 
+//add log_activity
+require __DIR__ . '/../repo/logservice.php';
+
 //if no one logged in redirect to login 
 require_once '../repo/auth.php';
 
@@ -22,6 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_board'])) {
     $stmt = $pdo->prepare("INSERT INTO board_members (board_id, user_id, role) VALUES (?,?, 'owner')");
     $stmt->execute([$new_board_id, $user_id]);
 
+    //log_activity ( user_id, action, target_type, target_id )
+    log_activity($user_id, 'created board', 'board', $new_board_id, $board_name);
+
     //send to new board 
     header("Location: board.php?id=" . $new_board_id);
     exit;
@@ -37,8 +43,11 @@ $stmt = $pdo->prepare("
     ORDER BY b.created_at DESC
 ");
 
+
 $stmt->execute([$user_id]);
 $boards = $stmt->fetchAll(); // array container for all boards 
+
+$notifications = get_activity_logs($user_id);
 ?>
 
 <!doctype html>
@@ -58,6 +67,11 @@ $boards = $stmt->fetchAll(); // array container for all boards
 
         .nav-pills .nav-link:not(.active):hover {
             background-color: rgba(255, 255, 255, .18);
+        }
+
+        .delete-board-btn:hover {
+            background-color: #8c8c8cff !important;
+            color: white !important;
         }
     </style>
 </head>
@@ -101,16 +115,35 @@ $boards = $stmt->fetchAll(); // array container for all boards
                         <!-- BOARD WRAPPER -->
                         <div class="board_wrapper" style="display: flex; gap: 10px; flex-wrap: wrap;">
 
-                            <!-- Load user boards -->
                             <?php foreach ($boards as $board): ?>
-                                <a href="board.php?id=<?= $board['id'] ?>&name=<?= urlencode($board['name']) ?>" class="btn btn-dark bg-gradient"
-                                    style="height: 100px; width: 25%; opacity:0.8; margin-top: 50px; position:relative; max-width:225px; min-width: 225px; text-decoration: none;">
+                                <div
+                                    style="height: 100px; max-width:225px; min-width: 225px; margin-top: 50px; position: relative;">
 
-                                    <div class="btn-label bg-dark"
-                                        style="position:absolute; left:0; right:0; bottom:0; padding:6px 8px; font-size:0.85rem; text-align:left; border-radius:4px;">
-                                        <?= htmlspecialchars($board['name']) ?>
-                                    </div>
-                                </a>
+                                    <a href="board.php?id=<?= $board['id'] ?>&name=<?= urlencode($board['name']) ?>"
+                                        class="btn btn-dark bg-gradient"
+                                        style="display: block; height: 100%; width: 100%; opacity:0.8; text-decoration: none;">
+
+                                        <div class="btn-label bg-dark"
+                                            style="position:absolute; left:0; right:0; bottom:0; padding:6px 8px; font-size:0.85rem; text-align:left; border-radius:4px;">
+                                            <?= htmlspecialchars($board['name']) ?>
+                                        </div>
+                                    </a>
+
+                                    <button type="button" class="delete-board-btn" data-bs-toggle="modal"
+                                        data-bs-target="#myEditModal"
+                                        style="z-index: 5; position:absolute; top:5px; right:5px; border: none; border-radius: 8px; color: white; background: #0808086a;"
+                                        data-board-id="<?= $board['id'] ?>"
+                                        data-board-name="<?= htmlspecialchars($board['name']) ?>">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                            class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path
+                                                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                            <path fill-rule="evenodd"
+                                                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                        </svg>
+                                    </button>
+
+                                </div>
                             <?php endforeach; ?>
 
                             <button type="button" class="btn btn-dark create-board-btn" data-bs-toggle="modal"
@@ -121,7 +154,7 @@ $boards = $stmt->fetchAll(); // array container for all boards
                             </button>
                         </div>
 
-                        <!-- MODAL -->
+                        <!-- MODAL CREATE -->
                         <div class="modal fade" id="myFormModal" tabindex="-1" aria-labelledby="myFormModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog">
@@ -149,38 +182,95 @@ $boards = $stmt->fetchAll(); // array container for all boards
                         </div>
 
 
+                        <!-- MODAL DELETE/UPDATE-->
+                        <div class="modal fade" id="myEditModal" tabindex="-1" aria-labelledby="myFormModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content bg-primary bg-gradient text-white">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">
+                                            <?= htmlspecialchars($board['name']) ?>
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Update board form -->
+                                        <form action="../api/update_board.php" id="updateBoardForm" method="POST">
+                                            <div class="mb-3">
+                                                <label for="inputBoard" class="form-label">Board title</label>
+                                                <input type="hidden" name="id" value="<?= $board['id'] ?>">
+                                                <input type="text" name="board_name" class="form-control"
+                                                    id="inputBoard" default
+                                                    value="<?= htmlspecialchars($board['name']) ?>">
+                                            </div>
+
+                                            <button type="submit" name="action" class="btn btn-dark " id="updateBtn"
+                                                value="update">Update</button>
+                                            <button type="submit" name="action" class="btn btn-danger " id="deleteBtn"
+                                                value="delete">Delete</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Home pane (new) -->
-                    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
-                        aria-labelledby="v-pills-messages-tab" style="position: relative;">
-                        <h2 class="text-left text-white" style="font-size:4vh;">HOME</h2>
-
-                        <ul class="list-group bg-dark" style="margin-top:7vh;">
-                            <li class="list-group-item ">Recent activity</li>
-                            <li class="list-group-item list-group-item-info">Activity 1</li>
-                            <li class="list-group-item list-group-item-info">Activity 2</li>
-
-                        </ul>
-
-
-                        <ul class="list-group bg-dark" style=" margin-top:7vh;">
-                            <li class="list-group-item">Notifications</li>
-                            <li class="list-group-item list-group-item-success">Notification 1</li>
-                            <li class="list-group-item list-group-item-success">Notification 1</li>
-
-
-                        </ul>
-                    </div>
-
                 </div>
-            </main>
+
+                <!-- Home pane (new) -->
+                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"
+                    style="position: relative;">
+                    <h2 class="text-left text-white" style="font-size:4vh;">HOME</h2>
+
+                    <ul class="list-group bg-dark" style="margin-top:7vh;">
+                        <li class="list-group-item ">Recent activity</li>
+                        <!-- Load user activity -->
+
+                        <?php foreach ($notifications as $notification): ?>
+                            <!--Update/Create/Delete-->
+                            <li class="list-group-item list-group-item-info">
+                                You <?= htmlspecialchars($notification['action']) ?> 
+                                <span class="fw-bold"><?= htmlspecialchars($notification['target_name']) ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
 
         </div>
+        </main>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
         </script>
+    <script>
+        const editModal = document.getElementById('myEditModal');
+        const updateBoardForm = document.getElementById('updateBoardForm');
+
+        document.querySelectorAll('.delete-board-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const boardId = this.getAttribute('data-board-id');
+                const boardName = this.getAttribute('data-board-name');
+
+                const modalTitle = editModal.querySelector('.modal-title');
+                const hiddenIdInput = updateBoardForm.querySelector('input[name="id"]');
+                const nameInput = updateBoardForm.querySelector('input[name="board_name"]');
+
+
+                modalTitle.textContent = boardName;
+                hiddenIdInput.value = boardId;
+                nameInput.value = boardName;
+            });
+        });
+
+        editModal.addEventListener('hidden.bs.modal', function () {
+            updateBoardForm.reset();
+            updateBoardForm.querySelector('input[name="id"]').value = '';
+            editModal.querySelector('.modal-title').textContent = '';
+        });
+
+    </script>
 </body>
 
 </html>
