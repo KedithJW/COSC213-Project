@@ -88,6 +88,7 @@ $(document).ready(function() {
     })
     .then(response => response.text())  // note: text(), not json()
     .then(cardId => {
+      console.log(`Assigning card id: ${cardId}`);
       newCard.attr('id', cardId);
     })
     .catch((error) => {
