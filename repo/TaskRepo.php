@@ -69,7 +69,7 @@ class TaskRepo {
     public function getAllTasks($cardId) : array {
       try {
         $conn = $this->connect();
-        $stmt = $conn->prepare("SELECT id, name, card_id, status, description FROM Task WHERE card_id = :cardId");
+        $stmt = $conn->prepare("SELECT id, name, card_id, status, description FROM Task WHERE card_id = :cardId ORDER BY status");
         $stmt->bindParam(":cardId", $cardId);
         $stmt->execute();
         

@@ -12,14 +12,23 @@ $(document).ready(function() {
     // Card
     const cardDiv = $("<div>").addClass("card new-card").css("width", "18rem");
 
-    // Card header
-    const cardHeader = $("<div>").addClass("card-header bg-secondary");
-
-    // Delete card btn
-    const deleteCardBtn = $('<i>').addClass("btn btn-light delete-card-btn bi bi-trash3-fill");
+    const cardHeader = $("<div>").addClass("card-header bg-secondary d-flex align-items-center gap-2");
+    const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
 
     // Text area
-    const textArea = $("<textarea>").addClass("form-control card-name").val("--Card Name--");
+    //const textArea = $("<textarea>").addClass("form-control card-name-edit").val("--Card Name--");
+    const textArea = $('<textarea>')
+      .addClass("form-control card-name-edit")
+      .attr({
+        rows: 1,
+        maxlength: 20
+      })
+      // .css({ "width": "8em", "resize": "none" })
+      // .on('input', function () {
+      //   this.style.height = 'auto';
+      //   this.style.height = this.scrollHeight + 'px';
+      // })
+      ;
 
     // List group with items
     const listGroup = $("<ul>").addClass("list-group list-group-flush");
@@ -40,12 +49,12 @@ $(document).ready(function() {
     cardHeader.append(deleteCardBtn, textArea);
 
     // Put it all together
-    cardDiv.append(cardHeader, listGroup, addTaskBtn);
+    cardDiv.append(cardHeader, addTaskBtn, listGroup);
     colDiv.append(cardDiv);
 
     // Add to page
     $(this).closest(".col-auto").before(colDiv);
-    //textArea.focus();
+    textArea.focus();
     //$("#cardContainer").append(colDiv);
   });
   
@@ -59,13 +68,16 @@ $(document).ready(function() {
     const card = $(this).closest(".card");
     const listGroup = card.find(".list-group");
 
-    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2");
+    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2 mb-2");
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
     // Create new text area
     const taskName = $('<textarea>')
       .addClass("form-control task-name")
-      .attr("rows", 1)
+      .attr({
+        rows: 1,
+        maxlength: 12
+      })
       .css({ "width": "8em", "resize": "none" })
       .on('input', function () {
         this.style.height = 'auto';
@@ -88,7 +100,7 @@ $(document).ready(function() {
     taskTopRow.append(newDeleteBtn, completeBtn, taskName);
     newTask.append(taskTopRow);
     newTask.append(taskDescription);
-    listGroup.append(newTask);
+    listGroup.prepend(newTask);
     taskName.focus();
   });
 
@@ -278,16 +290,16 @@ $(document).ready(function() {
 
     const colDiv = $("<div>").addClass("col-auto px-2");
     const cardDiv = $("<div>").addClass("card existing-card").attr("id", `card-${card.id}`).css("width", "18rem");
-    const cardHeader = $("<div>").addClass("card-header bg-secondary");
-    const deleteCardBtn = $('<i>').addClass("btn btn-light delete-card-btn bi bi-trash3-fill");
-    const textArea = $("<textarea>").addClass("form-control card-name").val(card.name);
+    const cardHeader = $("<div>").addClass("card-header bg-secondary d-flex align-items-center gap-2");
+    const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
+    const cardName = $("<div>").addClass("card-name-display").text(card.name);
     const listGroup = $("<ul>").addClass("list-group list-group-flush");
     const addTaskBtn = $("<a>")
       .attr("href", "#")
       .addClass("btn btn-dark add-task-btn")
       .text("+ Add task");
-    cardHeader.append(deleteCardBtn, textArea);
-    cardDiv.append(cardHeader, listGroup, addTaskBtn);
+    cardHeader.append(deleteCardBtn, cardName);
+    cardDiv.append(cardHeader, addTaskBtn, listGroup);
     colDiv.append(cardDiv);
     $("#add-card-container").before(colDiv); // this fixes add-card button to the end
   }
@@ -297,19 +309,20 @@ $(document).ready(function() {
     const status = $(task.status);
     const listGroup = card.find('.list-group');
 
-    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2");
+    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2 mb-2");
     // Create delete btn
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     // Create new text area and add task name
-    const taskName = $('<textarea>')
-      .addClass("form-control task-name")
-      .val(task.name)
-      .attr("rows", 1)
-      .css({ "width": "8em", "resize": "none" })
-      .on('input', function () {
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
-      });
+    const taskName = $('<div>')
+      .addClass("task-name-display")
+      .text(task.name)
+      // .attr("rows", 1)
+      // .css({ "width": "8em", "resize": "none" })
+      // .on('input', function () {
+      //   this.style.height = 'auto';
+      //   this.style.height = this.scrollHeight + 'px';
+      // })
+      ;
     // Create a new task list item
     const newTask = $("<li>").addClass("list-group-item task existing-task").attr("id", `task-${task.id}`);
     // task description
@@ -355,7 +368,7 @@ $(document).ready(function() {
     if(completeBtn) {
       const btn = $(completeBtn)
       btn.removeClass('btn-light').addClass('btn-primary').css('pointer-events', 'none');
-      btn.after('<span class="ms-2 complete-label">complete</span>');
+      btn.next().after('<span class="ms-2 complete-label">complete</span>'); //This adds before task name... FIX!!
       const li = btn.closest('.existing-task');
       const ul = li.parent();
       ul.append(li);
@@ -455,29 +468,26 @@ $(document).ready(function() {
                   updateTaskName(taskId, taskName);
                 }             
             }
-        }
-        // UPDATE Task description
-        else if (event.target && event.target.classList.contains('task-description')) {
-          console.log('Updating task description...'); 
-          const task = $(event.target).closest('.task');
-          const taskDescription = event.target.value;
-          if(task && taskDescription) {
-            const idString = task.attr('id');
-            const taskId = parseInt(idString.replace('task-', ''), 10);
-            updateTaskDescription(taskId, taskDescription);
-          }
+            const textarea = $(event.target);
+            const text = textarea.val();
+
+            const taskNameDisplay = $("<div>")
+              .addClass("task-name-display")
+              .text(text);
+
+            textarea.replaceWith(taskNameDisplay);
         }
         // CREATE Card
-        else if(event.target 
-          && event.target.classList.contains('card-name')
-          && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
-            const cardName = event.target.value;
-            if(cardName) {
-              console.log(`creating card with board id ${boardId}`);
-              createCard(cardName, boardId, $(event.target).closest('div.new-card'));
-              $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
-            }
-        }
+        // else if(event.target 
+        //   && event.target.classList.contains('card-name')
+        //   && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
+        //     const cardName = event.target.value;
+        //     if(cardName) {
+        //       console.log(`creating card with board id ${boardId}`);
+        //       createCard(cardName, boardId, $(event.target).closest('div.new-card'));
+        //       $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
+        //     }
+        // }
         // UPDATE Card
         else if(event.target 
           && event.target.classList.contains('card-name')
@@ -494,18 +504,45 @@ $(document).ready(function() {
 
   document.addEventListener('click', function(event) {
     // Handle changing task text
-    if(event.target 
-       && event.target.classList.contains('task-name') || event.target.classList.contains('task-description')) 
-    {
+    if(event.target && event.target.classList.contains('task-description')) {
       event.target.readOnly = false;
       event.target.focus();
     }
-    if(event.target 
-       && event.target.classList.contains('card-name')
-       && $(event.target).closest('div.existing-card').length > 0) 
-    {
-      event.target.readOnly = false;
-      event.target.focus();
+    if(event.target && event.target.classList.contains('task-name-display')) {
+      const text = $(event.target).text();
+      const textarea = $('<textarea>')
+        .addClass('form-control task-name-edit')
+        .val(text)
+      .attr({
+        rows: 1,
+        maxlength: 12
+      })
+        .css({ "width": "8em", "resize": "none" })
+        .on("input", function () {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + "px";
+        });
+      $(event.target).replaceWith(textarea);
+      textarea.focus();
+    }
+
+    if(event.target && event.target.classList.contains('card-name-display')) {
+      const text = $(event.target).text();
+      const textarea = $('<textarea>')
+        .addClass('form-control card-name-edit')
+        .val(text)
+      .attr({
+        rows: 1,
+        maxlength: 20
+      })
+        //.css({ "width": "8em", "resize": "none" })
+        // .on("input", function () {
+        //   this.style.height = "auto";
+        //   this.style.height = this.scrollHeight + "px";
+        // })
+        ;
+      $(event.target).replaceWith(textarea);
+      textarea.focus();
     }
     // DELETE Task
     if(event.target && event.target.classList.contains('delete-task-btn')) {
@@ -531,4 +568,75 @@ $(document).ready(function() {
     }
   });
 
+  // CAN call update functions here to cover scenarios where user does not press enter
+  $(document).on("blur", ".task-name-edit", function () {
+    const textarea = $(this);
+    const newText = textarea.val();
+    const idString = $(this).closest('.task').attr('id');
+    const taskId = parseInt(idString.replace('task-', ''), 10);
+
+    const taskName = $("<div>")
+      .addClass("task-name-display")
+      .text(newText);
+
+    textarea.replaceWith(taskName);
+    updateTaskName(taskId, newText);
+  });
+
+  $(document).on("blur", ".task-description", function () {
+    const textarea = $(this);
+    const description = textarea.val();
+    const idString = $(this).closest('.task').attr('id');
+    const taskId = parseInt(idString.replace('task-', ''), 10);
+
+    updateTaskDescription(taskId, description);
+  });
+
+  $(document).on("blur", ".card-name-edit", function () {
+    //id? update : create
+    const cardContainer = $(this).closest('div.new-card');
+    const textarea = $(this);
+    const cardName = textarea.val();
+    const parent = $(this).closest('.card');
+    const cardIdString = parent.attr('id');
+
+    if(cardIdString) {
+      cardId = parseInt(cardIdString.replace('card-', '', 10));
+      updateCard(cardId, cardName);
+    }
+    else {
+      createCard(cardName, boardId, cardContainer);
+      cardContainer.removeClass('new-card').addClass('existing-card');
+    }
+    const cardDisplay = $('<div>')
+      .addClass('card-name-display')
+      .text(cardName);
+
+    textarea.replaceWith(cardDisplay);
+  })
+
 });
+
+    //     // CREATE Card
+    //     else if(event.target 
+    //       && event.target.classList.contains('card-name')
+    //       && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
+    //         const cardName = event.target.value;
+    //         if(cardName) {
+    //           console.log(`creating card with board id ${boardId}`);
+    //           createCard(cardName, boardId, $(event.target).closest('div.new-card'));
+    //           $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
+    //         }
+    //     }
+    //     // UPDATE Card
+    //     else if(event.target 
+    //       && event.target.classList.contains('card-name')
+    //       && $(event.target).closest('div.existing-card').length > 0) {
+    //         const idString = $(event.target).closest('div.existing-card').attr('id');
+    //         const cardId = parseInt(idString.replace('card-', ''), 10);
+    //         const cardName = event.target.value;
+    //         if(cardName) {
+    //           updateCard(cardId, cardName);
+    //         }
+    //       }    
+    // }
