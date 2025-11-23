@@ -1,0 +1,16 @@
+.card-name-display {
+    font-size: 1.25em;
+}
+
+.task-description {
+    font-size: 0.75em;
+}
+
+.complete-label {
+    font-style: italic;
+    color: gray;
+}
+
+.bi {
+    font-size: 0.75em;
+}

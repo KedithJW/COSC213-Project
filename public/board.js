@@ -12,7 +12,7 @@ $(document).ready(function() {
     // Card
     const cardDiv = $("<div>").addClass("card new-card").css("width", "18rem");
 
-    const cardHeader = $("<div>").addClass("card-header bg-secondary d-flex align-items-center gap-2");
+    const cardHeader = $("<div>").addClass("card-header bg-secondary bg-gradient d-flex align-items-center gap-2");
     const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
 
     // Text area
@@ -86,7 +86,10 @@ $(document).ready(function() {
 
     const taskDescription = $('<textarea>')
       .addClass("form-control task-description")
-      .attr("rows", 1)
+      .attr({
+        rows: 1,
+        placeholder: "Task description..."
+      })
       .css({ "resize": "none" })
       .on('input', function () {
         this.style.height = 'auto';
@@ -290,7 +293,7 @@ $(document).ready(function() {
 
     const colDiv = $("<div>").addClass("col-auto px-2");
     const cardDiv = $("<div>").addClass("card existing-card").attr("id", `card-${card.id}`).css("width", "18rem");
-    const cardHeader = $("<div>").addClass("card-header bg-secondary d-flex align-items-center gap-2");
+    const cardHeader = $("<div>").addClass("card-header bg-secondary bg-gradient d-flex align-items-center gap-2");
     const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
     const cardName = $("<div>").addClass("card-name-display").text(card.name);
     const listGroup = $("<ul>").addClass("list-group list-group-flush");
@@ -329,7 +332,10 @@ $(document).ready(function() {
     const taskDescription = $('<textarea>')
       .addClass("form-control task-description")
       .val(task.description)
-      .attr("rows", 1)
+      .attr({
+        rows: 1,
+        placeholder: "Task description..."
+      })
       .css({ "resize": "none" })
       .on('input', function () {
         this.style.height = 'auto';
@@ -340,7 +346,7 @@ $(document).ready(function() {
     //////////////////////////////
     if (status[0] == 1) {
       const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
-      const completeLabel = $('<span>').addClass('ms-2 complete-label').text('complete');
+      const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
       taskTopRow.append(newDeleteBtn, completeBtn, taskName, completeLabel);
       newTask.append(taskTopRow, taskDescription); // ENDED HERE TO GO IMPLEMENT DESCRIPTION BACKEND
       listGroup.append(newTask);                   // finish for other status and it might work...
@@ -368,7 +374,7 @@ $(document).ready(function() {
     if(completeBtn) {
       const btn = $(completeBtn)
       btn.removeClass('btn-light').addClass('btn-primary').css('pointer-events', 'none');
-      btn.next().after('<span class="ms-2 complete-label">complete</span>'); //This adds before task name... FIX!!
+      btn.next().after('<span class="ms-2 complete-label">(complete)</span>'); //This adds before task name... FIX!!
       const li = btn.closest('.existing-task');
       const ul = li.parent();
       ul.append(li);
