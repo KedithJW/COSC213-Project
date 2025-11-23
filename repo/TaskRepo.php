@@ -5,12 +5,11 @@ class TaskRepo {
 
     private function connect() : PDO {
       $host = "localhost";
-      $port = 8889;
       $dbname = "213Project";
       $username = "root";
       $password = "root";
 
-      $dsn = "mysql:host=$host;port=$port;dbname=$dbname";
+      $dsn = "mysql:host=$host;dbname=$dbname";
       $conn = new PDO($dsn, $username, $password);
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       return $conn;
