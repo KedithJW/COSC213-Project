@@ -1,7 +1,7 @@
 <?php
 //connect to db 
 require_once '../repo/db_connect.php';
-
+require_once '../api/erro_logTest.php';
 //add log_activity
 require __DIR__ . '/../repo/logservice.php';
 

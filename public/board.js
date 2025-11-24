@@ -59,6 +59,8 @@ $(document).ready(function() {
 
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
+    const photoBtn = $('<i>').addClass("btn btn-light add-photo-btn bi bi-image");
+
     // Create new text area
     const newText = $('<textarea>').addClass("form-control task-name").text("Another one");
     // Eventually will implement more than just text area... so put inside a <div>
@@ -69,7 +71,7 @@ $(document).ready(function() {
     const newTask = $("<li>").addClass("list-group-item new-task");
 
     // Append it to the list
-    newTask.append(newDeleteBtn, completeBtn ,newText);
+    newTask.append(newDeleteBtn, completeBtn, photoBtn ,newText);
     listGroup.append(newTask);
     newText.focus();
   });
@@ -256,18 +258,28 @@ $(document).ready(function() {
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     // Create new text area and add task name
     const newText = $('<textarea>').addClass("form-control task-name").val(task.name);
+    //add new photo button
+    const photoBtn = $('<i>').addClass("btn btn-light add-photo-btn bi bi-image");
+
     // Create a new task list item
     const newTask = $("<li>").addClass("list-group-item existing-task").attr("id", `task-${task.id}`);
     if (status[0] == 1) {
       const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
       const completeLabel = $('<span>').addClass('ms-2 complete-label').text('complete');
-      newTask.append(newDeleteBtn, completeBtn, completeLabel, newText);
+      newTask.append(newDeleteBtn, completeBtn, completeLabel, photoBtn, newText);
       listGroup.append(newTask);
     } else {
         const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
-        newTask.append(newDeleteBtn, completeBtn, newText);
+        newTask.append(newDeleteBtn, completeBtn, photoBtn, newText);
         listGroup.append(newTask);
     }
+    if (task.photo) {
+        const img = $('<img>')
+            .attr("src", "uploads/tasks/" + task.photo)
+            .addClass("mt-2 img-fluid");
+        newTask.append(img);
+    }
+
   }
 
   function deleteCardFromDom(cardElement) {
@@ -450,5 +462,39 @@ $(document).ready(function() {
       completeTaskDom(event.target);
     }
   });
+  //Adding a photo to the task
+$(document).on("click", ".add-photo-btn", function() {
+    const taskItem = $(this).closest("li");
+    const taskId = taskItem.attr("id").replace("task-", "");
+
+    const fileInput = $('<input type="file" accept="image/*" style="display:none;">');
+    taskItem.append(fileInput);
+    fileInput.click();
+
+    fileInput.on("change", function() {
+        const file = this.files[0];
+        if (!file) return;
+
+        let formData = new FormData();
+        formData.append("taskid", taskId);
+        formData.append("photo", file);
+
+        $.ajax({
+            url: "/api/uploadTaskPhoto.php",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success && response.photo) {
+                    const img = $('<img>')
+                        .attr("src", response.photo)
+                        .addClass("mt-2 img-fluid");
+                    taskItem.append(img);
+                }
+            }
+        });
+    });
+});
 
 });

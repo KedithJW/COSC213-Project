@@ -52,7 +52,7 @@ class TaskRepo {
     public function getAllTasks($cardId) : array {
       try {
         $conn = $this->connect();
-        $stmt = $conn->prepare("SELECT id, name, card_id, status FROM Task WHERE card_id = :cardId");
+        $stmt = $conn->prepare("SELECT id, name, card_id, status, photo FROM Task WHERE card_id = :cardId");
         $stmt->bindParam(":cardId", $cardId);
         $stmt->execute();
         
@@ -89,5 +89,15 @@ class TaskRepo {
           return $error->getMessage();
       }  
     }
+
+    public function updateTaskPhoto($taskId, $filename) {
+    $conn = $this->connect();
+    $stmt = $conn->prepare("UPDATE Task SET photo = :photo WHERE id = :taskId");
+    $stmt->execute([
+        ':photo' => $filename,
+        ':taskId' => $taskId
+    ]);
+}
+
 }
 
