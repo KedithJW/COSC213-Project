@@ -31,7 +31,8 @@ CREATE TABLE users (
 CREATE TABLE task (
   id int PRIMARY KEY auto_increment	
   name varchar(50),		
-  card_id	int	
+  card_id	int,	
+  photo VARCHAR(255) NULL
 );
 
 CREATE TABLE card (
