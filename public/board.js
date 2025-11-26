@@ -72,6 +72,8 @@ $(document).ready(function() {
     const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2 mb-2");
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
+    const photoBtn = $('<i>').addClass("btn btn-light add-photo-btn bi bi-image");
+
     // Create new text area
     const taskName = $('<textarea>')
       .addClass("form-control task-name")
@@ -101,7 +103,7 @@ $(document).ready(function() {
     const newTask = $("<li>").addClass("list-group-item task new-task");
 
     // Append it to the list
-    taskTopRow.append(newDeleteBtn, completeBtn, taskName);
+    taskTopRow.append(newDeleteBtn, completeBtn, photoBtn, taskName);
     newTask.append(taskTopRow);
     newTask.append(taskDescription);
     listGroup.prepend(newTask);
@@ -348,7 +350,7 @@ $(document).ready(function() {
     if (status[0] == 1) {
       const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
       const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
-      taskTopRow.append(newDeleteBtn, completeBtn, taskName, completeLabel);
+      taskTopRow.append(newDeleteBtn, completeBtn, photoBtn, taskName, completeLabel);
       newTask.append(taskTopRow, taskDescription); // ENDED HERE TO GO IMPLEMENT DESCRIPTION BACKEND
       listGroup.append(newTask);                   // finish for other status and it might work...
     } else {
@@ -357,6 +359,13 @@ $(document).ready(function() {
         newTask.append(taskTopRow, taskDescription);
         listGroup.append(newTask);
     }
+    if (task.photo) {
+        const img = $('<img>')
+            .attr("src", "uploads/tasks/" + task.photo)
+            .addClass("mt-2 img-fluid");
+        newTask.append(img);
+    }
+
   }
 
   function deleteCardFromDom(cardElement) {
@@ -574,6 +583,40 @@ $(document).ready(function() {
       completeTaskDom(event.target);
     }
   });
+  //Adding a photo to the task
+$(document).on("click", ".add-photo-btn", function() {
+    const taskItem = $(this).closest("li");
+    const taskId = taskItem.attr("id").replace("task-", "");
+
+    const fileInput = $('<input type="file" accept="image/*" style="display:none;">');
+    taskItem.append(fileInput);
+    fileInput.click();
+
+    fileInput.on("change", function() {
+        const file = this.files[0];
+        if (!file) return;
+
+        let formData = new FormData();
+        formData.append("taskid", taskId);
+        formData.append("photo", file);
+
+        $.ajax({
+            url: "/api/uploadTaskPhoto.php",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success && response.photo) {
+                    const img = $('<img>')
+                        .attr("src", response.photo)
+                        .addClass("mt-2 img-fluid");
+                    taskItem.append(img);
+                }
+            }
+        });
+    });
+});
 
   // CAN call update functions here to cover scenarios where user does not press enter
   $(document).on("blur", ".task-name-edit", function () {
