@@ -5,6 +5,9 @@ require_once '../repo/db_connect.php';
 //add log_activity
 require __DIR__ . '/../repo/logservice.php';
 
+// add members service
+require __DIR__ . '/../repo/bm_service.php';
+
 //if no one logged in redirect to login 
 require_once '../repo/auth.php';
 
@@ -47,7 +50,9 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user_id]);
 $boards = $stmt->fetchAll(); // array container for all boards 
 
+//get notifications
 $notifications = get_activity_logs($user_id);
+
 ?>
 
 <!doctype html>
@@ -103,7 +108,7 @@ $notifications = get_activity_logs($user_id);
                 </ul>
             </aside>
 
-            <!-- MAIN CONTENT -->
+            <!-- MAIN CONTENT (USERS BOARDS) -->
             <main class="col py-3 bg-primary bg-gradient">
                 <div class="tab-content" id="v-pills-tabContent" style="margin-left:1vh; margin-top: 4vh;">
                     <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
@@ -116,9 +121,11 @@ $notifications = get_activity_logs($user_id);
                         <div class="board_wrapper" style="display: flex; gap: 10px; flex-wrap: wrap;">
 
                             <?php foreach ($boards as $board): ?>
-                                <div
-                                    style="height: 100px; max-width:225px; min-width: 225px; margin-top: 50px; position: relative;">
 
+                                <!-- Each Board Display(Button) -->
+                                <div style="height: 100px; max-width:225px; min-width: 225px; margin-top: 50px; position: relative;">
+
+                                    <!-- Board Link -->
                                     <a href="board.php?id=<?= $board['id'] ?>&name=<?= urlencode($board['name']) ?>"
                                         class="btn btn-dark bg-gradient"
                                         style="display: block; height: 100%; width: 100%; opacity:0.8; text-decoration: none;">
@@ -129,8 +136,9 @@ $notifications = get_activity_logs($user_id);
                                         </div>
                                     </a>
 
+                                    <!-- Edit Board Button -->
                                     <button type="button" class="delete-board-btn" data-bs-toggle="modal"
-                                        data-bs-target="#myEditModal"
+                                        data-bs-target="#myEditModal<?= $board['id'] ?>"
                                         style="z-index: 5; position:absolute; top:5px; right:5px; border: none; border-radius: 8px; color: white; background: #0808086a;"
                                         data-board-id="<?= $board['id'] ?>"
                                         data-board-name="<?= htmlspecialchars($board['name']) ?>">
@@ -144,8 +152,96 @@ $notifications = get_activity_logs($user_id);
                                     </button>
 
                                 </div>
+                                <!-- End of each board display/button -->
+
+                                <!-- MODAL DELETE/UPDATE FOR EACH BOARD  -->
+                                <div class="modal fade" id="myEditModal<?= $board['id'] ?>" tabindex="-1"
+                                    aria-labelledby="myFormModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content bg-primary bg-gradient text-white">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+                                                    <?= htmlspecialchars($board['name']) ?>
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <!-- Update board form -->
+                                                <form action="../api/update_board.php"
+                                                    id="updateBoardForm<?= $board['id'] ?>" method="POST">
+                                                    <div class="mb-3 w-100">
+
+                                                        <label for="inputBoard<?= $board['id'] ?>" class="form-label">Board title</label>
+                                                        <input type="hidden" name="id" value="<?= $board['id'] ?>"> <!-- Hidden field for board ID -->
+                                                        <!-- Board Name Input -->
+                                                        <input type="text" name="board_name" class="form-control"
+                                                            id="inputBoard<?= $board['id'] ?>"
+                                                            value="<?= htmlspecialchars($board['name']) ?>">
+
+                                                        <br>
+
+                                                        <label for="inputBoardMember<?= $board['id'] ?>"class="form-label">Add Member</label>
+                                                        <!-- Member Name Input -->
+                                                        <input type="text" name="add_name" class="form-control"
+                                                            id="inputBoardMember<?= $board['id'] ?>"
+                                                            placeholder="Member username/email to add">
+                                                        <!-- Board Members List -->
+                                                        <?php $boardMembers = get_board_members($board['id']); ?>
+                                                        <!-- Check if the current user is the owner of the board -->
+                                                        <?php $isOwner = is_board_owner($board['id'], $user_id); ?>
+
+                                                        <br>
+                                                        <!-- Board Members Display -->
+                                                        <p style="margin-bottom:10px;">Board Members</p>
+                                                        <?php foreach ($boardMembers as $member): ?>
+
+                                                            <div class="d-flex"
+                                                                style="margin-top:5px; padding:5px; border:1px solid #444; border-radius:4px; background-color:#222;">
+                                                                <span class="fw-bold"><?= htmlspecialchars($member['username']) ?></span>
+                                                                <span class="ms-2" style="font-size:0.85rem; color:#aaa;"><?= htmlspecialchars($member['email']) ?></span>
+                                                                <span class="ms-3" style="font-size:0.85rem; color:#aaa;"><?= htmlspecialchars($member['role'] ?? '') ?></span>
+
+                                                                <?php
+                                                                // Only display the 'Remove' button if the viewer is the owner AND the member is not the owner
+                                                                if ($isOwner && $member['user_id'] != $user_id):?>
+                                                                    <!-- Remove Member Button(ONLY FOR OWNER) -->
+                                                                    <form action="../api/update_board.php" method="POST"
+                                                                        class="ms-auto">
+                                                                        <input type="hidden" name="board_id"
+                                                                            value="<?= $board['id'] ?>">
+                                                                        <input type="hidden" name="user_id_to_remove"
+                                                                            value="<?= $member['user_id'] ?>">
+                                                                        <button type="submit" name="action"
+                                                                            class="btn btn-danger ms-auto" value="remove"
+                                                                            style="font-size:0.7rem; padding: 0.15rem 0.5rem;">Remove</button>
+                                                                    </form>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                    <!-- Action Buttons -->
+                                                    <div class="d-flex mt-4">
+                                                        <button type="submit" name="action" class="btn btn-dark"
+                                                            id="updateBtn<?= $board['id'] ?>" value="update">Update</button>
+
+                                                        <button type="submit" name="action" class="btn btn-danger ms-2"
+                                                            id="deleteBtn<?= $board['id'] ?>" value="delete">Delete</button>
+
+                                                        <button type="submit" name="action" class="btn btn-success ms-auto"
+                                                            id="addMemberBtn<?= $board['id'] ?>" value="add_member">Add Member</button>
+                                                    </div>
+                                                </form>
+                                                <!-- END Update board form -->
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             <?php endforeach; ?>
 
+                            <!-- Create New Board Button -->
                             <button type="button" class="btn btn-dark create-board-btn" data-bs-toggle="modal"
                                 data-bs-target="#myFormModal"
                                 style="height: 100px; opacity:0.8; margin-top: 50px;  max-width:225px; min-width: 225px;"
@@ -153,6 +249,8 @@ $notifications = get_activity_logs($user_id);
                                 Create new board
                             </button>
                         </div>
+                        <!-- End BOARD WRAPPER -->
+                    
 
                         <!-- MODAL CREATE -->
                         <div class="modal fade" id="myFormModal" tabindex="-1" aria-labelledby="myFormModalLabel"
@@ -176,101 +274,72 @@ $notifications = get_activity_logs($user_id);
                                             <button type="submit" name="create_board" class="btn btn-dark "
                                                 id="createBtn">Create</button>
                                         </form>
+                                        <!-- END Create new board form -->
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- END BOARD WRAPPER -->
 
-
-                        <!-- MODAL DELETE/UPDATE-->
-                        <div class="modal fade" id="myEditModal" tabindex="-1" aria-labelledby="myFormModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content bg-primary bg-gradient text-white">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">
-                                            <?= htmlspecialchars($board['name']) ?>
-                                        </h5>
-                                        <button type="button" class="btn-close btn-close-white"
-                                            data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Update board form -->
-                                        <form action="../api/update_board.php" id="updateBoardForm" method="POST">
-                                            <div class="mb-3">
-                                                <label for="inputBoard" class="form-label">Board title</label>
-                                                <input type="hidden" name="id" value="<?= $board['id'] ?>">
-                                                <input type="text" name="board_name" class="form-control"
-                                                    id="inputBoard" default
-                                                    value="<?= htmlspecialchars($board['name']) ?>">
-                                            </div>
-
-                                            <button type="submit" name="action" class="btn btn-dark " id="updateBtn"
-                                                value="update">Update</button>
-                                            <button type="submit" name="action" class="btn btn-danger " id="deleteBtn"
-                                                value="delete">Delete</button>
-                                    </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
+                    <!-- Home pane (new) -->
+                    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
+                        aria-labelledby="v-pills-messages-tab" style="position: relative;">
+                        <h2 class="text-left text-white" style="font-size:4vh;">HOME</h2>
+                    
+                        <!-- Recent Activity Log -->
+                        <ul class="list-group bg-dark" style="margin-top:7vh;">
+                            <li class="list-group-item ">Recent activity</li>
+
+                            <!-- Load user activity -->
+                            <?php $activity_logs = get_activity_logs($user_id, 10); // Get activity logs instead
+                            foreach ($activity_logs as $activity): ?>
+                                <li class="list-group-item list-group-item-info">
+                                    You <?= htmlspecialchars($activity['action'] ?? '') ?>
+                                    <span class="fw-bold"><?= htmlspecialchars($activity['target_name'] ?? '') ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <!-- End Home pane -->
+
                 </div>
-
-                <!-- Home pane (new) -->
-                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"
-                    style="position: relative;">
-                    <h2 class="text-left text-white" style="font-size:4vh;">HOME</h2>
-
-                    <ul class="list-group bg-dark" style="margin-top:7vh;">
-                        <li class="list-group-item ">Recent activity</li>
-                        <!-- Load user activity -->
-
-                        <?php foreach ($notifications as $notification): ?>
-                            <!--Update/Create/Delete-->
-                            <li class="list-group-item list-group-item-info">
-                                You <?= htmlspecialchars($notification['action']) ?> 
-                                <span class="fw-bold"><?= htmlspecialchars($notification['target_name']) ?></span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
+            </main>
 
         </div>
-        </main>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+            </script>
+        <!-- JavaScript to handle modal data population (Leaving in case)-->
+        <!-- <script>
+            const editModal = document.getElementById('myEditModal');
+            const updateBoardForm = document.getElementById('updateBoardForm');
 
-    </div>
+            document.querySelectorAll('.delete-board-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const boardId = this.getAttribute('data-board-id');
+                    const boardName = this.getAttribute('data-board-name');
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-        </script>
-    <script>
-        const editModal = document.getElementById('myEditModal');
-        const updateBoardForm = document.getElementById('updateBoardForm');
-
-        document.querySelectorAll('.delete-board-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const boardId = this.getAttribute('data-board-id');
-                const boardName = this.getAttribute('data-board-name');
-
-                const modalTitle = editModal.querySelector('.modal-title');
-                const hiddenIdInput = updateBoardForm.querySelector('input[name="id"]');
-                const nameInput = updateBoardForm.querySelector('input[name="board_name"]');
+                    const modalTitle = editModal.querySelector('.modal-title');
+                    const hiddenIdInput = updateBoardForm.querySelector('input[name="id"]');
+                    const nameInput = updateBoardForm.querySelector('input[name="board_name"]');
 
 
-                modalTitle.textContent = boardName;
-                hiddenIdInput.value = boardId;
-                nameInput.value = boardName;
+                    modalTitle.textContent = boardName;
+                    hiddenIdInput.value = boardId;
+                    nameInput.value = boardName;
+                });
             });
-        });
 
-        editModal.addEventListener('hidden.bs.modal', function () {
-            updateBoardForm.reset();
-            updateBoardForm.querySelector('input[name="id"]').value = '';
-            editModal.querySelector('.modal-title').textContent = '';
-        });
+            editModal.addEventListener('hidden.bs.modal', function () {
+                updateBoardForm.reset();
+                updateBoardForm.querySelector('input[name="id"]').value = '';
+                editModal.querySelector('.modal-title').textContent = '';
+            });
 
-    </script>
+        </script> -->
+   
 </body>
 
 </html>
