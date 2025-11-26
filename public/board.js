@@ -21,6 +21,7 @@ $(document).ready(function() {
       .addClass("form-control card-name-edit")
       .attr({
         rows: 1,
+        placeholder: "Card name...",
         maxlength: 20
       })
       // .css({ "width": "8em", "resize": "none" })
