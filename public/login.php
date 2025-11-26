@@ -1,19 +1,6 @@
 <?php
-session_start(); // Starts the session for login tracking
-
-$host = 'localhost';
-$port = '8889'; 
-$db   = '213Project';
-$user = 'root';
-$pass = 'root';
-$message = '';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 session_start();
 require_once '../repo/db_connect.php';
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
@@ -24,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6 || strlen($password) > 20) {
         $message = "Password must be between 6 and 20 characters.";
     } else {
-        $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
+        $stmt = $pdo->prepare("SELECT id, password, profile_picture FROM users WHERE BINARY username = :username");
         $stmt->execute(['username' => $username]);
 
             if ($stmt->rowCount() === 1) {
@@ -32,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $username;
-                    header("Location: temp-index.php"); // REVERT FILE NAME AFTER MAMP TESTING
+                    $_SESSION['profile_picture'] = $user['profile_picture'] ?? 'default.jpg';
+                    header("Location: index.php"); 
                     exit;
                 } else {
                     $message = "Incorrect password.";
@@ -42,9 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-} catch (PDOException $e) {
-    $message = "Database error: " . $e->getMessage();
-}
 ?>
 
 <!doctype html>
@@ -59,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-primary bg-gradient text-white">    
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <div class="container-fluid">
-            <a href="#" class="navbar-brand px-5">APP NAME</a>
+            <a href="#" class="navbar-brand px-5">Project Manager</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -69,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">Account</a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="myAccount.php">View My Account</a></li>
                             <li><a class="dropdown-item" href="login.php">Login</a></li>
                             <li><a class="dropdown-item" href="register.php">Sign Up</a></li>
                         </ul>

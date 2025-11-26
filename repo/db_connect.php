@@ -1,6 +1,5 @@
 <?php
 $host = 'localhost';
-$port = '8889'; 
 $db   = '213Project';
 $user = 'root';
 $pass = 'root';
