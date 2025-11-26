@@ -318,6 +318,8 @@ $(document).ready(function() {
     const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2 mb-2");
     // Create delete btn
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
+    // Create photo btn
+    const photoBtn = $('<i>').addClass("btn btn-light add-photo-btn bi bi-image");
     // Create new text area and add task name
     const taskName = $('<div>')
       .addClass("task-name-display")
@@ -355,7 +357,7 @@ $(document).ready(function() {
       listGroup.append(newTask);                   // finish for other status and it might work...
     } else {
         const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
-        taskTopRow.append(newDeleteBtn, completeBtn, taskName);
+        taskTopRow.append(newDeleteBtn, completeBtn, photoBtn, taskName);
         newTask.append(taskTopRow, taskDescription);
         listGroup.append(newTask);
     }
