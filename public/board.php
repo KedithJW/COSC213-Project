@@ -26,7 +26,7 @@ require_once '../repo/auth.php';
     </nav>
 
     <!-- TASK CARDS -->
-    <section class="p-5 bg-primary bg-gradient vh-100">
+    <section class="p-5 bg-primary bg-gradient min-vh-100">
         <div id= "board-1" class="row g-0">
             <div id="add-card-container" class="col-auto px-2">
                 <div class="card" style="width: 18rem;">
