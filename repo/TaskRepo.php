@@ -16,12 +16,13 @@ class TaskRepo {
     }
 
     // CREATE
-    public function addTask($name, $cardId) { //adds Task
+    public function addTask($name, $description ,$cardId) { //adds Task
       try {
         $conn = $this->connect();
-        $stmt = $conn->prepare("INSERT INTO Task (name, card_id) VALUES (:name, :card_id)");
+        $stmt = $conn->prepare("INSERT INTO Task (name, card_id, description) VALUES (:name, :card_id, :description)");
         $stmt->execute([
           ':name' => $name,
+          ':description' => $description,
           ':card_id' => $cardId
         ]);
 
@@ -48,11 +49,26 @@ class TaskRepo {
       }    
     }
 
+    public function updateTaskDescription($id, $description) {
+      try {
+        $conn = $this->connect();
+        $stmt = $conn->prepare("UPDATE Task SET description = :description WHERE id = :id");
+        $stmt->execute([
+          ':id' => $id,
+          ':description' => $description
+        ]);
+
+        return true;
+      } catch(PDOException $error) {
+        return $error->getMessage();
+      }   
+    }
+
     // READ
     public function getAllTasks($cardId) : array {
       try {
         $conn = $this->connect();
-        $stmt = $conn->prepare("SELECT id, name, card_id, status FROM Task WHERE card_id = :cardId");
+        $stmt = $conn->prepare("SELECT id, name, card_id, status, description FROM Task WHERE card_id = :cardId ORDER BY status");
         $stmt->bindParam(":cardId", $cardId);
         $stmt->execute();
         

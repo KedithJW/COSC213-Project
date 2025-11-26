@@ -12,14 +12,23 @@ $(document).ready(function() {
     // Card
     const cardDiv = $("<div>").addClass("card new-card").css("width", "18rem");
 
-    // Card header
-    const cardHeader = $("<div>").addClass("card-header bg-secondary");
-
-    // Delete card btn
-    const deleteCardBtn = $('<i>').addClass("btn btn-light delete-card-btn bi bi-trash3-fill");
+    const cardHeader = $("<div>").addClass("card-header bg-secondary bg-gradient d-flex align-items-center gap-2");
+    const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
 
     // Text area
-    const textArea = $("<textarea>").addClass("form-control card-name").val("--Card Name--");
+    //const textArea = $("<textarea>").addClass("form-control card-name-edit").val("--Card Name--");
+    const textArea = $('<textarea>')
+      .addClass("form-control card-name-edit")
+      .attr({
+        rows: 1,
+        maxlength: 20
+      })
+      // .css({ "width": "8em", "resize": "none" })
+      // .on('input', function () {
+      //   this.style.height = 'auto';
+      //   this.style.height = this.scrollHeight + 'px';
+      // })
+      ;
 
     // List group with items
     const listGroup = $("<ul>").addClass("list-group list-group-flush");
@@ -40,16 +49,18 @@ $(document).ready(function() {
     cardHeader.append(deleteCardBtn, textArea);
 
     // Put it all together
-    cardDiv.append(cardHeader, listGroup, addTaskBtn);
+    cardDiv.append(cardHeader, addTaskBtn, listGroup);
     colDiv.append(cardDiv);
 
     // Add to page
     $(this).closest(".col-auto").before(colDiv);
-    //textArea.focus();
+    textArea.focus();
     //$("#cardContainer").append(colDiv);
   });
   
-
+    ///////////////////////////////
+    // REFORMAT TASKS BEING CREATED
+    ///////////////////////////////
   // add task script
   $(document).on("click", ".add-task-btn", function() {
 
@@ -57,21 +68,43 @@ $(document).ready(function() {
     const card = $(this).closest(".card");
     const listGroup = card.find(".list-group");
 
+    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2 mb-2");
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
     // Create new text area
-    const newText = $('<textarea>').addClass("form-control task-name").text("Another one");
-    // Eventually will implement more than just text area... so put inside a <div>
-    // The div will represent the task object... childNodes are the attributes
-    // So id should be assigned to div... update task then needs to use this id
-    //const newTaskDiv = $('<div>').addClass("new-task");
+    const taskName = $('<textarea>')
+      .addClass("form-control task-name")
+      .attr({
+        rows: 1,
+        maxlength: 12
+      })
+      .css({ "width": "8em", "resize": "none" })
+      .on('input', function () {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+      });
+
+    const taskDescription = $('<textarea>')
+      .addClass("form-control task-description")
+      .attr({
+        rows: 1,
+        placeholder: "Task description..."
+      })
+      .css({ "resize": "none" })
+      .on('input', function () {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+      });
+
     // Create a new task list item
-    const newTask = $("<li>").addClass("list-group-item new-task");
+    const newTask = $("<li>").addClass("list-group-item task new-task");
 
     // Append it to the list
-    newTask.append(newDeleteBtn, completeBtn ,newText);
-    listGroup.append(newTask);
-    newText.focus();
+    taskTopRow.append(newDeleteBtn, completeBtn, taskName);
+    newTask.append(taskTopRow);
+    newTask.append(taskDescription);
+    listGroup.prepend(newTask);
+    taskName.focus();
   });
 
   //CREATE CARD HERE
@@ -86,9 +119,10 @@ $(document).ready(function() {
       headers: {'Content-Type': 'application/json'}, // looks like directory but it's actually a MIME type
       body: JSON.stringify(cardData),
     })
-    .then(response => response.text())  // note: text(), not json()
-    .then(cardId => {
-      newCard.attr('id', cardId);
+    .then(response => response.json())  // note: text(), not json()
+    .then(data => {
+      console.log(`Assigning card id: ${data.cardId}`);
+      newCard.attr('id', data.cardId);
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -96,9 +130,10 @@ $(document).ready(function() {
   }
 
   // create-task function for eventListener below
-  async function createTask(taskName, cardId, taskListItem) {
+  async function createTask(taskName, taskDescription, cardId, task) {
     const url = '/../COSC213-PROJECT/api/addTask.php';
     const taskData = {taskname: taskName,
+                      description: taskDescription,
                       cardid: cardId}; // seems redundant but trying to reformat for JSON
 
     
@@ -109,7 +144,8 @@ $(document).ready(function() {
     })
     .then(response => response.text())  // note: text(), not json()
     .then(taskId => {
-      taskListItem.id = taskId;
+      console.log(taskId);
+      task.id = taskId;
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -204,6 +240,30 @@ $(document).ready(function() {
     });
   }
 
+  async function updateTaskDescription(taskId, taskDescription) {
+    const url = '/../COSC213-PROJECT/api/updateTaskDescription.php';
+    const taskData = {taskid: taskId,
+                      description: taskDescription};
+
+    fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(taskData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });    
+  }
+
   //UPDATE Task status
   async function completeTask(taskId) {
     const url = '/../COSC213-PROJECT/api/completeTask.php';
@@ -233,16 +293,16 @@ $(document).ready(function() {
 
     const colDiv = $("<div>").addClass("col-auto px-2");
     const cardDiv = $("<div>").addClass("card existing-card").attr("id", `card-${card.id}`).css("width", "18rem");
-    const cardHeader = $("<div>").addClass("card-header bg-secondary");
-    const deleteCardBtn = $('<i>').addClass("btn btn-light delete-card-btn bi bi-trash3-fill");
-    const textArea = $("<textarea>").addClass("form-control card-name").val(card.name);
+    const cardHeader = $("<div>").addClass("card-header bg-secondary bg-gradient d-flex align-items-center gap-2");
+    const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
+    const cardName = $("<div>").addClass("card-name-display").text(card.name);
     const listGroup = $("<ul>").addClass("list-group list-group-flush");
     const addTaskBtn = $("<a>")
       .attr("href", "#")
       .addClass("btn btn-dark add-task-btn")
       .text("+ Add task");
-    cardHeader.append(deleteCardBtn, textArea);
-    cardDiv.append(cardHeader, listGroup, addTaskBtn);
+    cardHeader.append(deleteCardBtn, cardName);
+    cardDiv.append(cardHeader, addTaskBtn, listGroup);
     colDiv.append(cardDiv);
     $("#add-card-container").before(colDiv); // this fixes add-card button to the end
   }
@@ -252,20 +312,48 @@ $(document).ready(function() {
     const status = $(task.status);
     const listGroup = card.find('.list-group');
 
+    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2 mb-2");
     // Create delete btn
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     // Create new text area and add task name
-    const newText = $('<textarea>').addClass("form-control task-name").val(task.name);
+    const taskName = $('<div>')
+      .addClass("task-name-display")
+      .text(task.name)
+      // .attr("rows", 1)
+      // .css({ "width": "8em", "resize": "none" })
+      // .on('input', function () {
+      //   this.style.height = 'auto';
+      //   this.style.height = this.scrollHeight + 'px';
+      // })
+      ;
     // Create a new task list item
-    const newTask = $("<li>").addClass("list-group-item existing-task").attr("id", `task-${task.id}`);
+    const newTask = $("<li>").addClass("list-group-item task existing-task").attr("id", `task-${task.id}`);
+    // task description
+    const taskDescription = $('<textarea>')
+      .addClass("form-control task-description")
+      .val(task.description)
+      .attr({
+        rows: 1,
+        placeholder: "Task description..."
+      })
+      .css({ "resize": "none" })
+      .on('input', function () {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+      });
+    //////////////////////////////
+    // REFORMAT TASKS BEING LOADED
+    //////////////////////////////
     if (status[0] == 1) {
       const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
-      const completeLabel = $('<span>').addClass('ms-2 complete-label').text('complete');
-      newTask.append(newDeleteBtn, completeBtn, completeLabel, newText);
-      listGroup.append(newTask);
+      const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
+      taskTopRow.append(newDeleteBtn, completeBtn, taskName, completeLabel);
+      newTask.append(taskTopRow, taskDescription); // ENDED HERE TO GO IMPLEMENT DESCRIPTION BACKEND
+      listGroup.append(newTask);                   // finish for other status and it might work...
     } else {
         const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
-        newTask.append(newDeleteBtn, completeBtn, newText);
+        taskTopRow.append(newDeleteBtn, completeBtn, taskName);
+        newTask.append(taskTopRow, taskDescription);
         listGroup.append(newTask);
     }
   }
@@ -284,9 +372,12 @@ $(document).ready(function() {
 
   function completeTaskDom(completeBtn) {
     if(completeBtn) {
-      btn = $(completeBtn)
+      const btn = $(completeBtn)
       btn.removeClass('btn-light').addClass('btn-primary').css('pointer-events', 'none');
-      btn.after('<span class="ms-2 complete-label">complete</span>');
+      btn.next().after('<span class="ms-2 complete-label">(complete)</span>'); //This adds before task name... FIX!!
+      const li = btn.closest('.existing-task');
+      const ul = li.parent();
+      ul.append(li);
     }
   }
 
@@ -318,7 +409,7 @@ $(document).ready(function() {
   async function loadCards(boardId) {
     try {
       console.log('Getting cards...');
-      const response = await fetch(`/../COSC213-PROJECT/api/getCards.php?boardId=${boardId}`)
+      const response = await fetch(`/../COSC213-PROJECT/api/getCards.php?boardId=${boardId}`);
       const data = await response.json();
 
       if (data.success) {
@@ -361,44 +452,48 @@ $(document).ready(function() {
       event.target.readOnly = true;
       event.target.blur();
         // CREATE Task
-        if(event.target 
-          && event.target.classList.contains('task-name')
-          && event.target.parentNode.classList.contains('new-task')) {
+        if(event.target && event.target.classList.contains('task-name')) {
+            const task = $(event.target).closest('.task');
             const taskName = event.target.value;
-            //const cardId = $(event.target).closest('div.existing-card') // hold up... have we assigned card id?
-            if(taskName) {
-              const cardIdString = $(event.target).closest('div.existing-card').attr('id');
-              //console.log("Detected cardIdString:", cardIdString);
-              const cardId = parseInt(cardIdString.replace('card-', ''), 10);
-              //console.log("Detected cardId:", cardId);
-              createTask(taskName, cardId, event.target.parentNode);
-              //change task div class to existing-task... this will help separate CRUD operations
-              event.target.parentNode.classList.replace('new-task', 'existing-task');
+            if(task.hasClass('new-task')) {
+                const taskDescription = task.find('.task-description').val()||'';
+                const cardIdString = $(event.target).closest('div.existing-card').attr('id');
+                //console.log("Detected cardIdString:", cardIdString);
+                const cardId = parseInt(cardIdString.replace('card-', ''), 10);
+                //console.log("Detected cardId:", cardId);
+                createTask(taskName, taskDescription, cardId, task[0]);
+                //change task div class to existing-task... this will help separate CRUD operations
+                task.removeClass('new-task').addClass('existing-task');
             }
-        }
-        // UPDATE Task
-        else if(event.target 
-          && event.target.classList.contains('task-name')
-          && event.target.parentNode.classList.contains('existing-task')) {
-            console.log('Updating task...')
-            const idString = event.target.parentNode.id;
-            const taskId = parseInt(idString.replace('task-', ''), 10);
-            const taskName = event.target.value;
-            if(taskName) {              
-              updateTaskName(taskId, taskName);
+            // UPDATE Task
+            else if(task.hasClass('existing-task')) {
+                console.log('Updating task...');
+                const idString = task.attr('id');
+                const taskId = parseInt(idString.replace('task-', ''), 10);
+                if(taskName) {              
+                  updateTaskName(taskId, taskName);
+                }             
             }
+            const textarea = $(event.target);
+            const text = textarea.val();
+
+            const taskNameDisplay = $("<div>")
+              .addClass("task-name-display")
+              .text(text);
+
+            textarea.replaceWith(taskNameDisplay);
         }
         // CREATE Card
-        else if(event.target 
-          && event.target.classList.contains('card-name')
-          && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
-            const cardName = event.target.value;
-            if(cardName) {
-              console.log(`creating card with board id ${boardId}`);
-              createCard(cardName, boardId, $(event.target).closest('div.new-card'));
-              $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
-            }
-        }
+        // else if(event.target 
+        //   && event.target.classList.contains('card-name')
+        //   && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
+        //     const cardName = event.target.value;
+        //     if(cardName) {
+        //       console.log(`creating card with board id ${boardId}`);
+        //       createCard(cardName, boardId, $(event.target).closest('div.new-card'));
+        //       $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
+        //     }
+        // }
         // UPDATE Card
         else if(event.target 
           && event.target.classList.contains('card-name')
@@ -415,26 +510,53 @@ $(document).ready(function() {
 
   document.addEventListener('click', function(event) {
     // Handle changing task text
-    if(event.target 
-       && event.target.classList.contains('task-name')
-       && event.target.parentNode.classList.contains('existing-task')) 
-    {
+    if(event.target && event.target.classList.contains('task-description')) {
       event.target.readOnly = false;
       event.target.focus();
     }
-    if(event.target 
-       && event.target.classList.contains('card-name')
-       && $(event.target).closest('div.existing-card').length > 0) 
-    {
-      event.target.readOnly = false;
-      event.target.focus();
+    if(event.target && event.target.classList.contains('task-name-display')) {
+      const text = $(event.target).text();
+      const textarea = $('<textarea>')
+        .addClass('form-control task-name-edit')
+        .val(text)
+      .attr({
+        rows: 1,
+        maxlength: 12
+      })
+        .css({ "width": "8em", "resize": "none" })
+        .on("input", function () {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + "px";
+        });
+      $(event.target).replaceWith(textarea);
+      textarea.focus();
+    }
+
+    if(event.target && event.target.classList.contains('card-name-display')) {
+      const text = $(event.target).text();
+      const textarea = $('<textarea>')
+        .addClass('form-control card-name-edit')
+        .val(text)
+      .attr({
+        rows: 1,
+        maxlength: 20
+      })
+        //.css({ "width": "8em", "resize": "none" })
+        // .on("input", function () {
+        //   this.style.height = "auto";
+        //   this.style.height = this.scrollHeight + "px";
+        // })
+        ;
+      $(event.target).replaceWith(textarea);
+      textarea.focus();
     }
     // DELETE Task
     if(event.target && event.target.classList.contains('delete-task-btn')) {
-      const idString = event.target.parentNode.id;
+      const task = event.target.closest('.existing-task');
+      const idString = task.id;
       const taskId = parseInt(idString.replace('task-', ''), 10);
       deleteTask(taskId);
-      deleteTaskFromDom(event.target.parentNode);
+      deleteTaskFromDom(task);
     }
     // DELETE Card
     if(event.target && event.target.classList.contains('delete-card-btn')) {
@@ -444,11 +566,83 @@ $(document).ready(function() {
       deleteCardFromDom($(event.target).closest('div.col-auto'));
     }
     if(event.target && event.target.classList.contains('complete-task-btn')) {
-      const idString = event.target.parentNode.id;
+      const task = event.target.closest('.task');
+      const idString = task.id;
       const taskId = parseInt(idString.replace('task-', ''), 10);
       completeTask(taskId);
       completeTaskDom(event.target);
     }
   });
 
+  // CAN call update functions here to cover scenarios where user does not press enter
+  $(document).on("blur", ".task-name-edit", function () {
+    const textarea = $(this);
+    const newText = textarea.val();
+    const idString = $(this).closest('.task').attr('id');
+    const taskId = parseInt(idString.replace('task-', ''), 10);
+
+    const taskName = $("<div>")
+      .addClass("task-name-display")
+      .text(newText);
+
+    textarea.replaceWith(taskName);
+    updateTaskName(taskId, newText);
+  });
+
+  $(document).on("blur", ".task-description", function () {
+    const textarea = $(this);
+    const description = textarea.val();
+    const idString = $(this).closest('.task').attr('id');
+    const taskId = parseInt(idString.replace('task-', ''), 10);
+
+    updateTaskDescription(taskId, description);
+  });
+
+  $(document).on("blur", ".card-name-edit", function () {
+    //id? update : create
+    const cardContainer = $(this).closest('div.new-card');
+    const textarea = $(this);
+    const cardName = textarea.val();
+    const parent = $(this).closest('.card');
+    const cardIdString = parent.attr('id');
+
+    if(cardIdString) {
+      cardId = parseInt(cardIdString.replace('card-', '', 10));
+      updateCard(cardId, cardName);
+    }
+    else {
+      createCard(cardName, boardId, cardContainer);
+      cardContainer.removeClass('new-card').addClass('existing-card');
+    }
+    const cardDisplay = $('<div>')
+      .addClass('card-name-display')
+      .text(cardName);
+
+    textarea.replaceWith(cardDisplay);
+  })
+
 });
+
+    //     // CREATE Card
+    //     else if(event.target 
+    //       && event.target.classList.contains('card-name')
+    //       && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
+    //         const cardName = event.target.value;
+    //         if(cardName) {
+    //           console.log(`creating card with board id ${boardId}`);
+    //           createCard(cardName, boardId, $(event.target).closest('div.new-card'));
+    //           $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
+    //         }
+    //     }
+    //     // UPDATE Card
+    //     else if(event.target 
+    //       && event.target.classList.contains('card-name')
+    //       && $(event.target).closest('div.existing-card').length > 0) {
+    //         const idString = $(event.target).closest('div.existing-card').attr('id');
+    //         const cardId = parseInt(idString.replace('card-', ''), 10);
+    //         const cardName = event.target.value;
+    //         if(cardName) {
+    //           updateCard(cardId, cardName);
+    //         }
+    //       }    
+    // }

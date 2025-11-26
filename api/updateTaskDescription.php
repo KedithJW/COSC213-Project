@@ -1,8 +1,6 @@
 <?php
 require __DIR__ . '/../repo/TaskRepo.php';
 
-// api/addTask.php
-
 // Allow JSON requests
 header("Content-Type: application/json");
 
@@ -16,29 +14,30 @@ if ($data === null) {
     echo json_encode(["error" => "Invalid JSON received"]);
     exit;
 }
-
-$taskName = $data['taskname'] ?? null;
-$description = $data['description'] ?? null;
-$cardId = $data['cardid'] ?? null; 
+$taskId = $data['taskid'];
+$taskDescription = $data['description'] ?? null; 
 
 // Basic validation
-if (!$taskName) {
+if (!$taskDescription || !$taskId) {
     http_response_code(400);
-    echo json_encode(["error" => "Missing task name"]);
-    exit;
-}
-if (!$cardId) {
-    http_response_code(400);
-    echo json_encode(["error" => "Missing card id"]);
+    echo json_encode(["error" => "Missing task info"]);
     exit;
 }
 
 ////// now pass to repo
 try {
     $taskRepo = new TaskRepo(); 
-    $taskId = "task-" . $taskRepo->addTask($taskName, $description, $cardId);
+    $taskRepo->updateTaskDescription($taskId, $taskDescription);
 
-    echo $taskId;
+    // Example: save or process the task (for now just respond)
+    $response = [
+        "success" => true,
+        "message" => "Task updated successfully",
+        "taskDescription" => $taskDescription
+    ];
+
+    // Return JSON response
+    echo json_encode($response);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([

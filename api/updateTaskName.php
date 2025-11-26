@@ -33,7 +33,8 @@ try {
     $response = [
         "success" => true,
         "message" => "Task updated successfully",
-        "taskName" => $taskName
+        "taskName" => $taskName,
+        "taskId" => $taskId
     ];
 
     // Return JSON response

@@ -15,10 +15,33 @@ require_once '../repo/auth.php';
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <title> Board - Project Manager</title>
 </head>
-    <body>
-        <?php include "../templates/header.php"; ?>
-    </body>
 
+    <?php include "../templates/header.php"; ?>
+
+    
+    <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
+        <div class="container">
+            <span id="board-title" class="navbar-brand"></span>
+            <button 
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navmenu"
+            >
+            <span class="navbar-toggler-icon"></span>
+            </button>   
+            
+            <div class="collapse navbar-collapse" id="navmenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">--members--</a>
+                    </li><li class="nav-item">
+                        <a href="#" class="nav-link">--share--</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <!-- TASK CARDS -->
     <section class="p-5 bg-primary bg-gradient vh-100">
         <div id= "board-1" class="row g-0">
