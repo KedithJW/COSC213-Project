@@ -7,7 +7,7 @@ $(document).ready(function() {
   $(".add-card-btn").click(function(){
 
     // Outer wrapper
-    const colDiv = $("<div>").addClass("col-auto px-2");
+    const colDiv = $("<div>").addClass("col-auto px-2 py-2");
 
     // Card
     const cardDiv = $("<div>").addClass("card new-card").css("width", "18rem");
