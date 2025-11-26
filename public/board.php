@@ -15,9 +15,9 @@ require_once '../repo/auth.php';
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <title> Board - Project Manager</title>
 </head>
-    <body>
-        <?php include "../templates/header.php"; ?>
-    </body>
+
+    <?php include "../templates/header.php"; ?>
+
     
     <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
         <div class="container">
