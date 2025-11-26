@@ -32,13 +32,6 @@ require_once '../repo/auth.php';
             </button>   
             
             <div class="collapse navbar-collapse" id="navmenu">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">--members--</a>
-                    </li><li class="nav-item">
-                        <a href="#" class="nav-link">--share--</a>
-                    </li>
-                </ul>
             </div>
         </div>
     </nav>
