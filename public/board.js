@@ -623,27 +623,3 @@ $(document).ready(function() {
   })
 
 });
-
-    //     // CREATE Card
-    //     else if(event.target 
-    //       && event.target.classList.contains('card-name')
-    //       && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
-    //         const cardName = event.target.value;
-    //         if(cardName) {
-    //           console.log(`creating card with board id ${boardId}`);
-    //           createCard(cardName, boardId, $(event.target).closest('div.new-card'));
-    //           $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
-    //         }
-    //     }
-    //     // UPDATE Card
-    //     else if(event.target 
-    //       && event.target.classList.contains('card-name')
-    //       && $(event.target).closest('div.existing-card').length > 0) {
-    //         const idString = $(event.target).closest('div.existing-card').attr('id');
-    //         const cardId = parseInt(idString.replace('card-', ''), 10);
-    //         const cardName = event.target.value;
-    //         if(cardName) {
-    //           updateCard(cardId, cardName);
-    //         }
-    //       }    
-    // }
