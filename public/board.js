@@ -3,6 +3,78 @@ console.log("Script loaded!");
 let boardId; // declare here for global access
 $(document).ready(function() {
 
+  let draggedTask = null;
+  // DRAG START
+  $(document).on('dragstart', '.task', function () {
+      draggedTask = this;
+      $(this).addClass('dragging');
+  });
+
+  // DRAG END
+  $(document).on('dragend', '.task', function () {
+      draggedTask = null;
+      $(this).removeClass('dragging');
+  });
+
+  // DRAG OVER (must prevent default)
+  $(document).on('dragover', '.card', function (e) {
+      e.preventDefault();
+      $(this).addClass('drag-over');
+  });
+
+  // DRAG LEAVE
+  $(document).on('dragleave', '.card', function () {
+      $(this).removeClass('drag-over');
+  });
+
+  // DROP
+  $(document).on('drop', '.card', function () {
+      $(this).removeClass('drag-over');
+      if (draggedTask) {
+          const taskIdString = draggedTask.id;
+          const taskId = parseInt(taskIdString.replace('task-', ''), 10);
+          let cardIdString = $(this).attr('id');
+          let cardId = parseInt(cardIdString.replace('card-', ''), 10);
+          console.log(cardId);
+          let taskList = $(this).find('.list-group');
+          taskList.prepend(draggedTask);
+          updateTaskCardId(taskId, cardId);
+      }
+  });
+
+                // console.log('Updating task...');
+                // const idString = task.attr('id');
+                // const taskId = parseInt(idString.replace('task-', ''), 10);
+                // if(taskName) {              
+                //   updateTaskName(taskId, taskName);
+                // }  
+
+    // updateTaskCardId function
+  async function updateTaskCardId(taskId, cardId) {
+    const url = '/../COSC213-PROJECT/api/updateTaskCardId.php';
+    const taskData = {taskid: taskId,
+                      cardid: cardId};
+
+    fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(taskData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+  }
+
+
   // Add card script
   $(".add-card-btn").click(function(){
 
@@ -97,7 +169,7 @@ $(document).ready(function() {
       });
 
     // Create a new task list item
-    const newTask = $("<li>").addClass("list-group-item task new-task");
+    const newTask = $("<li>").addClass("list-group-item task new-task").attr('draggable', 'true');
 
     // Append it to the list
     taskTopRow.append(newDeleteBtn, completeBtn, taskName);
@@ -327,7 +399,10 @@ $(document).ready(function() {
       // })
       ;
     // Create a new task list item
-    const newTask = $("<li>").addClass("list-group-item task existing-task").attr("id", `task-${task.id}`);
+    const newTask = $("<li>")
+      .addClass("list-group-item task existing-task")
+      .attr({id: `task-${task.id}`,
+             draggable: true});
     // task description
     const taskDescription = $('<textarea>')
       .addClass("form-control task-description")

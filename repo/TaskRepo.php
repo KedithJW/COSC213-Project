@@ -50,6 +50,21 @@ class TaskRepo {
       }    
     }
 
+    public function updateTaskCardId($taskId, $cardId) {
+      try {
+        $conn = $this->connect();
+        $stmt = $conn->prepare("UPDATE Task SET card_id = :card_id WHERE id = :id");
+        $stmt->execute([
+          ':id' => $taskId,
+          ':card_id' => $cardId
+        ]);
+
+        return true;
+      } catch(PDOException $error) {
+        return $error->getMessage();
+      } 
+    }
+
     public function updateTaskDescription($id, $description) {
       try {
         $conn = $this->connect();
