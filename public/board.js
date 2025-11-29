@@ -41,14 +41,7 @@ $(document).ready(function() {
           updateTaskCardId(taskId, cardId);
       }
   });
-
-                // console.log('Updating task...');
-                // const idString = task.attr('id');
-                // const taskId = parseInt(idString.replace('task-', ''), 10);
-                // if(taskName) {              
-                //   updateTaskName(taskId, taskName);
-                // }  
-
+  
     // updateTaskCardId function
   async function updateTaskCardId(taskId, cardId) {
     const url = '/../COSC213-PROJECT/api/updateTaskCardId.php';
