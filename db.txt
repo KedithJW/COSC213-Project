@@ -1,17 +1,19 @@
 CREATE TABLE board(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
-    owner_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    owner_id INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (owner_id) REFERENCES users(id)
 );
 
 CREATE TABLE board_members(
     id INT PRIMARY KEY AUTO_INCREMENT,
     board_id INT,
-    user_id INT,
+    user_id INT UNSIGNED NOT NULL,
     role enum('owner', 'member') DEFAULT 'member',
-    role enum('owner', 'member') DEFAULT member,
-    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (board_id) REFERENCES board(id)
 );
 
 CREATE TABLE users (
@@ -22,21 +24,47 @@ CREATE TABLE users (
   phone VARCHAR(20),
   username VARCHAR(30) NOT NULL,
   password VARCHAR(255) NOT NULL,
+  profile_picture varchar(255),
   PRIMARY KEY (id),
   UNIQUE (email),
   UNIQUE (username)
 );
 
 CREATE TABLE task (
-  id int PRIMARY KEY auto_increment	
+  id int PRIMARY KEY auto_increment,	
   name varchar(50),		
-  card_id	int	
+  card_id	int,
+  state BOOLEAN DEFAULT FALSE,
+  description VARCHAR(150),	
+  photo VARCHAR(255) NULL,
+  FOREIGN KEY (card_id) REFERENCES card(id)  
 );
 
 CREATE TABLE card (
   id int PRIMARY KEY auto_increment,
   name	varchar(50),		
-  board_id int		
+  board_id int,
+  FOREIGN KEY (board_id) REFERENCES board(id)
+);
+
+CREATE TABLE activity_logs (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,          
+    action VARCHAR(50) NOT NULL,  
+    target_type VARCHAR(50),   
+    target_id INT,            
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    target_name VARCHAR(50),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 
+CREATE TABLE notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  recipient_user_id INT NOT NULL,
+  source_activity_id INT NULL,
+  board_id INT NULL, 
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  notification_msg VARCHAR(255) NOT NULL
+);
