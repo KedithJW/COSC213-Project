@@ -165,7 +165,7 @@ $(document).ready(function() {
     const newTask = $("<li>").addClass("list-group-item task new-task").attr('draggable', 'true');
 
     // Append it to the list
-    taskTopRow.append(newDeleteBtn, completeBtn, taskName);
+    taskTopRow.append(taskName, newDeleteBtn, completeBtn);
     newTask.append(taskTopRow);
     newTask.append(taskDescription);
     listGroup.prepend(newTask);
@@ -415,12 +415,12 @@ $(document).ready(function() {
     if (status[0] == 1) {
       const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
       const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
-      taskTopRow.append(newDeleteBtn, completeBtn, taskName, completeLabel);
+      taskTopRow.append(taskName, completeLabel, newDeleteBtn, completeBtn);
       newTask.append(taskTopRow, taskDescription); // ENDED HERE TO GO IMPLEMENT DESCRIPTION BACKEND
       listGroup.append(newTask);                   // finish for other status and it might work...
     } else {
         const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
-        taskTopRow.append(newDeleteBtn, completeBtn, taskName);
+        taskTopRow.append(taskName, newDeleteBtn, completeBtn);
         newTask.append(taskTopRow, taskDescription);
         listGroup.append(newTask);
     }
