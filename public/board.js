@@ -414,8 +414,8 @@ $(document).ready(function() {
     //////////////////////////////
     if (status[0] == 1) {
       const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
-      const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
-      taskTopRow.append(taskName, completeLabel, newDeleteBtn, completeBtn);
+      //const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
+      taskTopRow.append(taskName, newDeleteBtn, completeBtn);
       newTask.append(taskTopRow, taskDescription); // ENDED HERE TO GO IMPLEMENT DESCRIPTION BACKEND
       listGroup.append(newTask);                   // finish for other status and it might work...
     } else {
@@ -438,16 +438,16 @@ $(document).ready(function() {
     }
   }
 
-  function completeTaskDom(completeBtn) {
-    if(completeBtn) {
-      const btn = $(completeBtn)
-      btn.removeClass('btn-light').addClass('btn-primary').css('pointer-events', 'none');
-      btn.next().after('<span class="ms-2 complete-label">(complete)</span>'); //This adds before task name... FIX!!
-      const li = btn.closest('.existing-task');
-      const ul = li.parent();
-      ul.append(li);
-    }
-  }
+  // function completeTaskDom(completeBtn) {
+  //   if(completeBtn) {
+  //     const btn = $(completeBtn)
+  //     btn.removeClass('btn-light').addClass('btn-primary').css('pointer-events', 'none');
+  //     btn.next().after('<span class="ms-2 complete-label">(complete)</span>'); //This adds before task name... FIX!!
+  //     const li = btn.closest('.existing-task');
+  //     const ul = li.parent();
+  //     ul.append(li);
+  //   }
+  // }
 
   //READ Tasks
   async function loadTasks(cardId) {
