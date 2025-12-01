@@ -359,7 +359,7 @@ $(document).ready(function() {
   // Add card to DOM (for readinig cards from db)
   function addCardToDom(card) {
 
-    const colDiv = $("<div>").addClass("col-auto px-2");
+    const colDiv = $("<div>").addClass("col-auto px-2 py-2");
     const cardDiv = $("<div>").addClass("card existing-card").attr("id", `card-${card.id}`).css("width", "18rem");
     const cardHeader = $("<div>").addClass("card-header bg-secondary bg-gradient d-flex align-items-center gap-2");
     const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
