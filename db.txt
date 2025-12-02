@@ -62,3 +62,7 @@ CREATE TABLE notifications (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   notification_msg VARCHAR(255) NOT NULL
 );
+
+NOTES: 
+Due to the way passwords are stored in the database, as hashes, we are unable to provide a default admin login credentials. In a different situation we would've just used sqls insert command to enter some pre made credentials into our database for you, but since the database only stores a hashed password this wont work. We are using php default passwording hashing system, so when a password is entered a salt a random salt is then genereted and embeded in that password before hashing, then it gets hashed. Then the password verify takes that salt and re uses with the newly enetered password to check it. All together this is why we cant provide a default login for you, sorry. If you could be please use our register page, this will allow you to create your own login info. 
+
