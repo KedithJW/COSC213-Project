@@ -10,7 +10,6 @@ CREATE TABLE board_members(
     board_id INT,
     user_id INT,
     role enum('owner', 'member') DEFAULT 'member',
-    role enum('owner', 'member') DEFAULT member,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -29,7 +28,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE task (
-  id int PRIMARY KEY auto_increment	
+  id int PRIMARY KEY auto_increment,
   name varchar(50),		
   card_id	int,
   state BOOLEAN DEFAULT FALSE,
@@ -63,3 +62,51 @@ CREATE TABLE notifications (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   notification_msg VARCHAR(255) NOT NULL
 );
+
+INSERT INTO users (
+  first_name,
+  last_name,
+  email,
+  phone,
+  username,
+  password
+) VALUES (
+  'Admin',
+  'User',
+  'Admin@gmail.com',
+  '2507625445',
+  'AdminUser',
+  '$2y$10$VTpIfAxBgSuUmiT1dtn1geTEfbc/25oiiqAZAiOQ73WKTXNbNV7Au'
+);
+
+INSERT INTO users (
+  first_name,
+  last_name,
+  email,
+  phone,
+  username,
+  password
+) VALUES (
+  'Admin',
+  'Collaborator',
+  'Collaborator@gmail.com',
+  '2507625445',
+  'Collaborator',
+  '$2y$10$VTpIfAxBgSuUmiT1dtn1geTEfbc/25oiiqAZAiOQ73WKTXNbNV7Au'
+);
+
+You login Credentials will be 
+Username : AdminUser
+Password : 12345678
+
+&
+
+Username : Collaborator
+Password : 12345678
+
+Feel free to also make your own accounts through our register page.
+
+
+
+
+

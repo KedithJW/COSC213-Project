@@ -134,7 +134,8 @@ $(document).ready(function() {
     const card = $(this).closest(".card");
     const listGroup = card.find(".list-group");
 
-    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2 mb-2");
+    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center justify-content-between mb-2");
+    const btnGroup = $('<div>').addClass("d-flex align-items-center gap-2").css("margin-left", "10px");
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
     const photoBtn = $('<i>').addClass("btn btn-light add-photo-btn bi bi-image");
@@ -168,7 +169,8 @@ $(document).ready(function() {
     const newTask = $("<li>").addClass("list-group-item task new-task").attr('draggable', 'true');
 
     // Append it to the list
-    taskTopRow.append(newDeleteBtn, completeBtn, photoBtn, taskName);
+    btnGroup.append(completeBtn, photoBtn, newDeleteBtn);
+    taskTopRow.append(taskName, btnGroup);
     newTask.append(taskTopRow);
     newTask.append(taskDescription);
     listGroup.prepend(newTask);
@@ -359,7 +361,7 @@ $(document).ready(function() {
   // Add card to DOM (for readinig cards from db)
   function addCardToDom(card) {
 
-    const colDiv = $("<div>").addClass("col-auto px-2");
+    const colDiv = $("<div>").addClass("col-auto px-2 py-2");
     const cardDiv = $("<div>").addClass("card existing-card").attr("id", `card-${card.id}`).css("width", "18rem");
     const cardHeader = $("<div>").addClass("card-header bg-secondary bg-gradient d-flex align-items-center gap-2");
     const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
@@ -380,7 +382,8 @@ $(document).ready(function() {
     const status = $(task.status);
     const listGroup = card.find('.list-group');
 
-    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center gap-2 mb-2");
+    const taskTopRow = $('<div>').addClass("task-top-row d-flex align-items-center justify-content-between mb-2");
+    const btnGroup = $('<div>').addClass("d-flex align-items-center gap-2").css("margin-left", "10px");
     // Create delete btn
     const newDeleteBtn = $('<i>').addClass("btn btn-light delete-task-btn bi bi-trash3-fill");
     // Create photo btn
@@ -419,13 +422,15 @@ $(document).ready(function() {
     //////////////////////////////
     if (status[0] == 1) {
       const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
-      const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
-      taskTopRow.append(newDeleteBtn, completeBtn, photoBtn, taskName, completeLabel);
+      //const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
+      btnGroup.append(completeBtn, photoBtn, newDeleteBtn);
+      taskTopRow.append(taskName, btnGroup);
       newTask.append(taskTopRow, taskDescription); // ENDED HERE TO GO IMPLEMENT DESCRIPTION BACKEND
       listGroup.append(newTask);                   // finish for other status and it might work...
     } else {
         const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
-        taskTopRow.append(newDeleteBtn, completeBtn, photoBtn, taskName);
+        btnGroup.append(completeBtn, photoBtn, newDeleteBtn);
+        taskTopRow.append(taskName, btnGroup);
         newTask.append(taskTopRow, taskDescription);
         listGroup.append(newTask);
     }
@@ -454,7 +459,7 @@ $(document).ready(function() {
     if(completeBtn) {
       const btn = $(completeBtn)
       btn.removeClass('btn-light').addClass('btn-primary').css('pointer-events', 'none');
-      btn.next().after('<span class="ms-2 complete-label">(complete)</span>'); //This adds before task name... FIX!!
+      //btn.next().after('<span class="ms-2 complete-label">(complete)</span>'); //This adds before task name... FIX!!
       const li = btn.closest('.existing-task');
       const ul = li.parent();
       ul.append(li);

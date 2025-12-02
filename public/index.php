@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_board'])) {
     log_activity($user_id, 'created board', 'board', $new_board_id, $board_name);
 
     //send to new board 
-    header("Location: board.php?id=" . $new_board_id);
+    header("Location: board.php?id=" . $new_board_id . "&name=" . $board_name);
     exit;
 }
 
