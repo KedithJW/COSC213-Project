@@ -1,11 +1,14 @@
-CREATE TABLE board(
+Create DATABASE IF NOT EXISTS 213Project CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE 213Project;
+
+CREATE TABLE  IF NOT EXISTS board(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     owner_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE board_members(
+CREATE TABLE  IF NOT EXISTS board_members(
     id INT PRIMARY KEY AUTO_INCREMENT,
     board_id INT,
     user_id INT,
@@ -13,7 +16,7 @@ CREATE TABLE board_members(
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE users (
+CREATE TABLE  IF NOT EXISTS users (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
@@ -27,7 +30,7 @@ CREATE TABLE users (
   UNIQUE (username)
 );
 
-CREATE TABLE task (
+CREATE TABLE  IF NOT EXISTS task (
   id int PRIMARY KEY auto_increment,
   name varchar(50),		
   card_id	int,
@@ -36,13 +39,13 @@ CREATE TABLE task (
   photo VARCHAR(255) NULL
 );
 
-CREATE TABLE card (
+CREATE TABLE  IF NOT EXISTS card (
   id int PRIMARY KEY auto_increment,
   name	varchar(50),		
   board_id int		
 );
 
-CREATE TABLE activity_logs (
+CREATE TABLE  IF NOT EXISTS activity_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,          
     action VARCHAR(50) NOT NULL,  
@@ -53,7 +56,7 @@ CREATE TABLE activity_logs (
 );
 
 
-CREATE TABLE notifications (
+CREATE TABLE  IF NOT EXISTS notifications (
   id INT AUTO_INCREMENT PRIMARY KEY,
   recipient_user_id INT NOT NULL,
   source_activity_id INT NULL,
