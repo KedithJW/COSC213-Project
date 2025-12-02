@@ -12,4 +12,10 @@ We created a Trello-like app that serves as a helpful tool for a variety of diff
 --Detailed instructions on how to set up the development environment, create the database (include the .sql schema file), and run the application locally.--
 
 ### Credentials:
---Credentials for a pre-made admin/demo user account.--
+Account 1 : 
+  Username : AdminUser
+  Password : 12345678
+
+Account 2 : 
+  Username : Collaborator
+  Password : 12345678
