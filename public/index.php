@@ -215,9 +215,11 @@ $boards = $stmt->fetchAll(); // array container for all boards
                                                         <button type="submit" name="action" class="btn btn-dark"
                                                             id="updateBtn<?= $board['id'] ?>" value="update">Update</button>
 
+                                                        <?php if ($isOwner): ?>
                                                         <button type="submit" name="action" class="btn btn-danger ms-2"
                                                             id="deleteBtn<?= $board['id'] ?>" value="delete">Delete</button>
-
+                                                        <?php endif; ?>
+                                                        
                                                         <button type="submit" name="action" class="btn btn-success ms-auto"
                                                             id="addMemberBtn<?= $board['id'] ?>" value="add_member">Add Member</button>
                                                     </div>
