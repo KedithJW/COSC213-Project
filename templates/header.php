@@ -47,12 +47,11 @@ $notifications = get_user_notifications($user_id, 5);
                             <h6 class="dropdown-header">Notifications</h6>
                         </li>
                         
-                       
+                    
                             <!-- List of notifications -->
                             <?php foreach ($notifications as $notification): ?>
                                 <li>
                                     
-                                    <!-- Skip read notifications -->
                                     <?php if($notification['is_read']): ?>
                                         <?php continue; ?>
                                     <?php endif; ?>
