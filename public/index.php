@@ -42,8 +42,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user_id]);
 $boards = $stmt->fetchAll(); // array container for all boards 
 
-//get notifications
-$notifications = get_activity_logs($user_id);
+
 
 ?>
 
