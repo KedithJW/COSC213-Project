@@ -3,10 +3,6 @@ require_once '../repo/auth.php';
 require __DIR__ . '/../repo/db_connect.php';
 require __DIR__ . '/../repo/logservice.php';
 require __DIR__ . '/../repo/bm_service.php';
-//if no one logged in redirect to login 
-
-//check
-
 
 //when user updates board 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -23,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $pdo->prepare("UPDATE board SET name = ? WHERE id = ?");
             $stmt->execute([$board_name, $board_id]);
 
-            //log_activity ( user_id, action, target_type, target_id )
             log_activity($user_id, 'updated board name', 'board', $board_id, $board_name);
 
             header("Location: ../public/index.php");
@@ -46,8 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $pdo->prepare("DELETE FROM board WHERE id = ?");
             $stmt->execute([$board_id]);
 
-
-            //log_activity ( user_id, action, target_type, target_id )
             log_activity($user_id, 'deleted board', 'board', $board_id, $board_name);
 
             header("Location: ../public/index.php");
@@ -74,11 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->execute([$board_id, $added_user_id]);
                 // Get member name for logging
                 $board_member_name = get_board_member_name($board_id, $added_user_id);
-                //log_activity ( user_id, action, target_type, target_id )
                 log_activity($user_id, "added member '$board_member_name' to board", 'board', $board_id, "Added user ID: $added_user_id");
                 //notification to added member
                 notification($added_user_id, null, $board_id, "You have been added to the board '$board_name'.");
-
             }
         }
     } else if ($action == 'remove') {
@@ -98,7 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
-
 header("Location: ../public/index.php");
 exit;
 ?>

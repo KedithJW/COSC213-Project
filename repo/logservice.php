@@ -29,6 +29,7 @@ function get_activity_logs($user_id, $limit = 10)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+//Notifications
 function notification($recipient_user_id, $notification_msg, $source_activity_id = null, $board_id = null)
 {
     global $pdo;
@@ -39,12 +40,10 @@ function notification($recipient_user_id, $notification_msg, $source_activity_id
     $stmt->execute([$recipient_user_id, $notification_msg, $source_activity_id, $board_id]);
 }
 
-
+//Mark all notifications as read
 function mark_all_notifications_read($user_id)
 {
     global $pdo;
-
-    //$uid = (int) $user_id;
     $stmt = $pdo->prepare(
         "UPDATE notifications 
                 SET is_read = 1 
@@ -55,12 +54,10 @@ function mark_all_notifications_read($user_id)
     return $stmt->rowCount();
 }
 
-
+//Count unread notifications
 function count_unread_notifications($user_id)
 {
     global $pdo;
-
-    //$uid = (int) $user_id;
     $stmt = $pdo->prepare(
         "SELECT COUNT(*) as unread_count 
                 FROM notifications
@@ -71,6 +68,8 @@ function count_unread_notifications($user_id)
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return (int) $result['unread_count'];
 }
+
+//Get user notifications
 function get_user_notifications($user_id, $limit = 4)
 {
     global $pdo;
