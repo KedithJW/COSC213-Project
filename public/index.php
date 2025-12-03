@@ -4,22 +4,17 @@ require_once '../repo/db_connect.php';
 require_once '../api/erro_logTest.php';
 //add log_activity
 require __DIR__ . '/../repo/logservice.php';
-
 // add members service
 require __DIR__ . '/../repo/bm_service.php';
-
 //if no one logged in redirect to login 
 require_once '../repo/auth.php';
-
 //check
 $user_id = $_SESSION['user_id'];
 
 // when user creates board 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_board'])) {
-    $board_name = trim($_POST['board_name']); // extract board name from POST data
-
-    // $stmt is a pdo statement object 
-
+    // extract board name from POST data
+    $board_name = trim($_POST['board_name']); 
     //update board db 
     $stmt = $pdo->prepare("INSERT INTO board (name, owner_id) VALUES (?,?)");
     $stmt->execute([$board_name, $user_id]);
@@ -27,10 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_board'])) {
     //update board_members
     $stmt = $pdo->prepare("INSERT INTO board_members (board_id, user_id, role) VALUES (?,?, 'owner')");
     $stmt->execute([$new_board_id, $user_id]);
-
     //log_activity ( user_id, action, target_type, target_id )
     log_activity($user_id, 'created board', 'board', $new_board_id, $board_name);
-
     //send to new board 
     header("Location: board.php?id=" . $new_board_id . "&name=" . $board_name);
     exit;
@@ -45,7 +38,6 @@ $stmt = $pdo->prepare("
     WHERE bm.user_id = ?
     ORDER BY b.created_at DESC
 ");
-
 
 $stmt->execute([$user_id]);
 $boards = $stmt->fetchAll(); // array container for all boards 
@@ -249,7 +241,7 @@ $notifications = get_activity_logs($user_id);
                                 Create new board
                             </button>
                         </div>
-                        <!-- End BOARD WRAPPER -->
+                        <!-- END BOARD WRAPPER -->
                     
 
                         <!-- MODAL CREATE -->
@@ -283,7 +275,7 @@ $notifications = get_activity_logs($user_id);
 
                     </div>
 
-                    <!-- Home pane (new) -->
+                    <!-- HOME PANE -->
                     <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
                         aria-labelledby="v-pills-messages-tab" style="position: relative;">
                         <h2 class="text-left text-white" style="font-size:4vh;">HOME</h2>
@@ -293,7 +285,7 @@ $notifications = get_activity_logs($user_id);
                             <li class="list-group-item ">Recent activity</li>
 
                             <!-- Load user activity -->
-                            <?php $activity_logs = get_activity_logs($user_id, 10); // Get activity logs instead
+                            <?php $activity_logs = get_activity_logs($user_id, 10); 
                             foreach ($activity_logs as $activity): ?>
                                 <li class="list-group-item list-group-item-info">
                                     You <?= htmlspecialchars($activity['action'] ?? '') ?>
@@ -302,7 +294,7 @@ $notifications = get_activity_logs($user_id);
                             <?php endforeach; ?>
                         </ul>
                     </div>
-                    <!-- End Home pane -->
+                    <!-- END HOME PANE -->
 
                 </div>
             </main>
@@ -310,36 +302,7 @@ $notifications = get_activity_logs($user_id);
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-            </script>
-        <!-- JavaScript to handle modal data population (Leaving in case)-->
-        <!-- <script>
-            const editModal = document.getElementById('myEditModal');
-            const updateBoardForm = document.getElementById('updateBoardForm');
-
-            document.querySelectorAll('.delete-board-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const boardId = this.getAttribute('data-board-id');
-                    const boardName = this.getAttribute('data-board-name');
-
-                    const modalTitle = editModal.querySelector('.modal-title');
-                    const hiddenIdInput = updateBoardForm.querySelector('input[name="id"]');
-                    const nameInput = updateBoardForm.querySelector('input[name="board_name"]');
-
-
-                    modalTitle.textContent = boardName;
-                    hiddenIdInput.value = boardId;
-                    nameInput.value = boardName;
-                });
-            });
-
-            editModal.addEventListener('hidden.bs.modal', function () {
-                updateBoardForm.reset();
-                updateBoardForm.querySelector('input[name="id"]').value = '';
-                editModal.querySelector('.modal-title').textContent = '';
-            });
-
-        </script> -->
-   
+        </script>
+   </div>
 </body>
-
 </html>
