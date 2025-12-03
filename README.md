@@ -32,8 +32,8 @@ ls -l
 mysql -u root -p < schema.sql 
 ```
 
+(Optional: If you dont have user 'root' with password 'root') :
 ```bash
-(Optional: If db connection fails) :
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
 ```
 
@@ -49,7 +49,7 @@ You should see a message like: `PHP Development Server started at http://localho
 ```
 
 4. Login with admin credentials: 
-```bash
+```bash1
 Username : AdminUser
 Password : 12345678
 
