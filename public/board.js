@@ -676,7 +676,7 @@ $(document).on("click", ".add-photo-btn", function() {
         formData.append("photo", file);
 
         $.ajax({
-            url: "/api/uploadTaskPhoto.php",
+            url: "/../COSC213-PROJECT/api/uploadTaskPhoto.php",
             type: "POST",
             data: formData,
             processData: false,
