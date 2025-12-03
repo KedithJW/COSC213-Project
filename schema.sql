@@ -34,7 +34,7 @@ CREATE TABLE  IF NOT EXISTS task (
   id int PRIMARY KEY auto_increment,
   name varchar(50),		
   card_id	int,
-  state BOOLEAN DEFAULT FALSE,
+  status BOOLEAN DEFAULT FALSE,
   description VARCHAR(150),	
   photo VARCHAR(255) NULL
 );
