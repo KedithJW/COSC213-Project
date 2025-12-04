@@ -37,6 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $pdo->prepare("DELETE FROM card WHERE board_id = ?");
             $stmt->execute([$board_id]);
 
+            // Delete Board Members
+            $stmt = $pdo->prepare("DELETE FROM board_members WHERE board_id = ?");
+            $stmt->execute([$board_id]);
+
             // Delete the Board
             $stmt = $pdo->prepare("DELETE FROM board WHERE id = ?");
             $stmt->execute([$board_id]);
