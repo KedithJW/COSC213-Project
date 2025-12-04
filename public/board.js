@@ -2,6 +2,11 @@ console.log("Script loaded!");
 //////// board.php scripts //////////
 let boardId; // declare here for global access
 $(document).ready(function() {
+    const params = new URLSearchParams(window.location.search);
+    boardId = Number(params.get("id")) || 0;
+    console.log(`board id: ${boardId}`);
+    loadBoardName();
+    loadCards(boardId);
 
   let draggedTask = null;
   // DRAG START
@@ -81,30 +86,16 @@ $(document).ready(function() {
     const deleteCardBtn = $('<i>').addClass("btn btn-secondary delete-card-btn bi bi-trash3-fill");
 
     // Text area
-    //const textArea = $("<textarea>").addClass("form-control card-name-edit").val("--Card Name--");
     const textArea = $('<textarea>')
       .addClass("form-control card-name-edit")
       .attr({
         rows: 1,
         placeholder: "Card name...",
         maxlength: 20
-      })
-      // .css({ "width": "8em", "resize": "none" })
-      // .on('input', function () {
-      //   this.style.height = 'auto';
-      //   this.style.height = this.scrollHeight + 'px';
-      // })
-      ;
+      });
 
     // List group with items
     const listGroup = $("<ul>").addClass("list-group list-group-flush");
-
-    // don't need for now, but might be useful when populating from db
-    // const tasks = ["Task 1", "Task 2", "Task 3"];
-    // tasks.forEach(task => {
-    //   const listItem = $("<li>").addClass("list-group-item").text(task);
-    //   listGroup.append(listItem);
-    // });
 
     // Add-task button
     const addTaskBtn = $("<a>")
@@ -121,12 +112,8 @@ $(document).ready(function() {
     // Add to page
     $(this).closest(".col-auto").before(colDiv);
     textArea.focus();
-    //$("#cardContainer").append(colDiv);
   });
-  
-    ///////////////////////////////
-    // REFORMAT TASKS BEING CREATED
-    ///////////////////////////////
+
   // add task script
   $(document).on("click", ".add-task-btn", function() {
 
@@ -186,10 +173,10 @@ $(document).ready(function() {
     console.log("Sending to server:", cardData);
     fetch(url, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'}, // looks like directory but it's actually a MIME type
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(cardData),
     })
-    .then(response => response.json())  // note: text(), not json()
+    .then(response => response.json()) 
     .then(data => {
       console.log(`Assigning card id: ${data.cardId}`);
       newCard.attr('id', data.cardId);
@@ -204,15 +191,15 @@ $(document).ready(function() {
     const url = '/../COSC213-PROJECT/api/addTask.php';
     const taskData = {taskname: taskName,
                       description: taskDescription,
-                      cardid: cardId}; // seems redundant but trying to reformat for JSON
+                      cardid: cardId};
 
     
     fetch(url, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'}, // looks like directory but it's actually a MIME type
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(taskData),
     })
-    .then(response => response.text())  // note: text(), not json()
+    .then(response => response.text()) 
     .then(taskId => {
       console.log(taskId);
       task.id = taskId;
@@ -374,7 +361,7 @@ $(document).ready(function() {
     cardHeader.append(deleteCardBtn, cardName);
     cardDiv.append(cardHeader, addTaskBtn, listGroup);
     colDiv.append(cardDiv);
-    $("#add-card-container").before(colDiv); // this fixes add-card button to the end
+    $("#add-card-container").before(colDiv);
   }
   // Add task to DOM (for reading tasks from db)
   function addTaskToDom(task) {
@@ -391,14 +378,7 @@ $(document).ready(function() {
     // Create new text area and add task name
     const taskName = $('<div>')
       .addClass("task-name-display")
-      .text(task.name)
-      // .attr("rows", 1)
-      // .css({ "width": "8em", "resize": "none" })
-      // .on('input', function () {
-      //   this.style.height = 'auto';
-      //   this.style.height = this.scrollHeight + 'px';
-      // })
-      ;
+      .text(task.name);
     // Create a new task list item
     const newTask = $("<li>")
       .addClass("list-group-item task existing-task")
@@ -417,16 +397,14 @@ $(document).ready(function() {
         this.style.height = 'auto';
         this.style.height = this.scrollHeight + 'px';
       });
-    //////////////////////////////
-    // REFORMAT TASKS BEING LOADED
-    //////////////////////////////
+
     if (status[0] == 1) {
       const completeBtn = $('<i>').addClass('btn btn-primary complete-task-btn bi bi-check-circle').css('pointer-events', 'none');
-      //const completeLabel = $('<span>').addClass('ms-2 complete-label').text('(complete)');
+
       btnGroup.append(completeBtn, photoBtn, newDeleteBtn);
       taskTopRow.append(taskName, btnGroup);
-      newTask.append(taskTopRow, taskDescription); // ENDED HERE TO GO IMPLEMENT DESCRIPTION BACKEND
-      listGroup.append(newTask);                   // finish for other status and it might work...
+      newTask.append(taskTopRow, taskDescription); 
+      listGroup.append(newTask);                   
     } else {
         const completeBtn = $('<i>').addClass("btn btn-light complete-task-btn bi bi-check-circle");
         btnGroup.append(completeBtn, photoBtn, newDeleteBtn);
@@ -459,7 +437,6 @@ $(document).ready(function() {
     if(completeBtn) {
       const btn = $(completeBtn)
       btn.removeClass('btn-light').addClass('btn-primary').css('pointer-events', 'none');
-      //btn.next().after('<span class="ms-2 complete-label">(complete)</span>'); //This adds before task name... FIX!!
       const li = btn.closest('.existing-task');
       const ul = li.parent();
       ul.append(li);
@@ -473,14 +450,9 @@ $(document).ready(function() {
       const response = await fetch(`/../COSC213-PROJECT/api/getTasks.php?cardId=${cardId}`)
       console.log("HTTP status:", response.status);
       const data = await response.json();
-      // for trouble shooting: run next two lines instead above line
-      //const text = await response.text();
-      //console.log("Raw response:", text);
       console.log(data.success);
       if (data.success) {
         data.tasks.forEach(task => {
-          //create html element and append...
-          //console.log(task.card_id);
           addTaskToDom(task);
         });
       } else {
@@ -521,15 +493,6 @@ $(document).ready(function() {
     }
   }
 
-  // page load event listener
-  $(document).ready(() => {
-    const params = new URLSearchParams(window.location.search);
-    boardId = Number(params.get("id")) || 0;
-    console.log(`board id: ${boardId}`);
-    loadBoardName();
-    loadCards(boardId);
-  });
-
   // keydown event listener
   document.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
@@ -568,17 +531,6 @@ $(document).ready(function() {
 
             textarea.replaceWith(taskNameDisplay);
         }
-        // CREATE Card
-        // else if(event.target 
-        //   && event.target.classList.contains('card-name')
-        //   && $(event.target).closest('div.new-card').length > 0) { //if length > 0 then div.new-card exists
-        //     const cardName = event.target.value;
-        //     if(cardName) {
-        //       console.log(`creating card with board id ${boardId}`);
-        //       createCard(cardName, boardId, $(event.target).closest('div.new-card'));
-        //       $(event.target).closest('div.new-card').removeClass('new-card').addClass('existing-card');
-        //     }
-        // }
         // UPDATE Card
         else if(event.target 
           && event.target.classList.contains('card-name')
@@ -625,13 +577,7 @@ $(document).ready(function() {
       .attr({
         rows: 1,
         maxlength: 20
-      })
-        //.css({ "width": "8em", "resize": "none" })
-        // .on("input", function () {
-        //   this.style.height = "auto";
-        //   this.style.height = this.scrollHeight + "px";
-        // })
-        ;
+      });
       $(event.target).replaceWith(textarea);
       textarea.focus();
     }
@@ -659,7 +605,7 @@ $(document).ready(function() {
     }
   });
   //Adding a photo to the task
-$(document).on("click", ".add-photo-btn", function() {
+  $(document).on("click", ".add-photo-btn", function() {
     const taskItem = $(this).closest("li");
     const taskId = taskItem.attr("id").replace("task-", "");
 
@@ -691,7 +637,7 @@ $(document).on("click", ".add-photo-btn", function() {
             }
         });
     });
-});
+  });
 
   // CAN call update functions here to cover scenarios where user does not press enter
   $(document).on("blur", ".task-name-edit", function () {
